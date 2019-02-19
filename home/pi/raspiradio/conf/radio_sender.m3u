@@ -1,0 +1,31 @@
+##########################################################################
+# Es sind max. 99 Sender-Stationen in dieser Liste einzutragen.          #
+# Format:        SENDERSTREAMADRESSE # SENDERNAME                        #
+# Sendername max. 15 Zeichen                                             #
+# Der Sendername selber darf kein Leerzeichen enthalten.                 #
+##########################################################################
+
+
+http://ndr-ndr2-niedersachsen.cast.addradio.de/ndr/ndr2/niedersachsen/mp3/128/stream.mp3 # NDR2-Nieders.
+http://player.ffn.de/ffn.mp3 # FFN
+http://ndr-njoy-live.cast.addradio.de/ndr/njoy/live/mp3/128/stream.mp3 # N-JOY-Radio
+http://188.94.97.91/radio21.mp3 # Radio21
+http://80.252.104.101:8000/rockt # RB-Rockt
+http://burnfm.radionetz.de:8000/burn-fm.mp3 # Burn-FM
+http://streams.balboatech.com:8000 # EBM-Radio.com
+http://radio.acidicinfektion.ind.in:8047/stream # AciDic-Radio
+http://mp3channels.webradio.antenne.de/chillout # Ant.Bay.-Chill
+http://188.94.97.90/rockland.mp3 # Rocklandradio
+http://stream.radiosaw.de/saw-70er/mp3-128/ # SAW-70er
+http://streaming.radionomy.com/Cafe80sFM # Cafe-80s
+http://dg-dradio-http-fra-dtag-cdn.cast.addradio.de/dlf/01/128/mp3/stream.mp3 # Deutschlandfunk
+http://mp3.planetradio.de/planetradio/hqlivestream.mp3 # PlanetRadio
+http://mp3.planetradio.de/plrchannels/hqoldschool.mp3 # PR-Oldschool
+http://mp3.planetradio.de/plrchannels/hqtheclub.mp3 # PR-TheClub
+http://mp3.planetradio.de/plrchannels/hqnightwax.mp3 # PR-Nightwax
+http://mp3.planetradio.de/plrchannels/hqblackbeats.mp3 # PR-Black-Beats
+http://mp3ad.gongwb.c.nmdn.net/ps-gongwb/livestream.mp3 # Radio-Gong
+http://dg-rbb-http-dus-dtag-cdn.cast.addradio.de/rbb/radioberlin/live/mp3/128/stream.mp3 # RBB-Berlin
+http://dg-rbb-http-dus-dtag-cdn.cast.addradio.de/rbb/kulturradio/live/mp3/128/stream.mp3 # RBB-Kultradio
+http://icepool.silvacast.com/JACKFM.mp3 # Jack-FM
+http://rtlberlin.hoerradar.de/rtlberlin-live-mp3-192?sABC=5p3o3s88%230%23745341774r5370q1o5qss555op34n9o5%23&amsparams=playerid:;skey:1547386760 # RTL-Radio

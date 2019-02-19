@@ -1,0 +1,29 @@
+#! /bin/sh 
+### BEGIN INIT INFO
+# Provides: radio
+# Required-Start: $syslog
+# Required-Stop: $syslog
+# Default-Start: 2 3 4 5
+# Default-Stop: 0 1 6
+# Short-Description: radio program
+# Description:
+### END INIT INFO 
+case "$1" in
+start)
+        echo "radio started"
+        # Starte Programm
+        python /home/pi/raspiradio/prog/mein_radio.py
+        ;;
+    stop)
+        echo "radio stopped"
+        # Beende Programm
+        killall python
+        killall mpd        
+        ;;
+    *)
+        echo "Used /etc/init.d/radio {start|stop}"
+        exit 1
+        ;;
+esac 
+exit 0
+

@@ -1,0 +1,11 @@
+[Unit]
+Description=LCD Aus Text
+DefaultDependencies=no
+Before=umount.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python /home/pi/raspiradio/prog/LCDaus_text.py
+[Install]
+WantedBy=halt.target poweroff.target
+
