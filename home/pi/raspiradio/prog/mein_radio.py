@@ -25,8 +25,8 @@
 #         Web-Radio mit Raspberry Pi       #
 #            +----------------+            #
 #            |    #######  oo |            #
-#            |    #######  oo |            #
-#            |  O             |            #
+#            | O  #######  oo |            #
+#            |                |            #
 #            |   --      --   |            #
 #            |  (  )    (  )  |            #
 #            |   --      --   |            #
@@ -36,28 +36,30 @@
 ############################################
 
 # Versionsinfo
-# 20190113: Senderkonfiguration in laufendem Radio-Betrieb nun ohne Einschränkungen möglich
-# 20181220: Bounce time Dreher korrigiert, Klatschsensor 2000ms wegen Kammerhall, D Taste nur 200ms
-# 20181216: make
+# Make 1/2019   
 
-#-----------------KONFIGURATION--------------------#
 
-version = "190113"
+#################
+# Konfiguration #
+#################
+version = "Make:1/2019"
 
-Bedienanleitung_anzeigen = True       # Bedienanleitung_anzeigen?
-wlan_ueber_radio_konfigurieren = True # WLAN per Radioknöpfen konfigurieren?
+Bedienanleitung_anzeigen = True       # Bedienanleitung_anzeigen True/False
+wlan_ueber_radio_konfigurieren = True # W-LAN per Radioknöpfen konfigurieren True/False
 
-grosser_sendersprung = 5              # Doppelbedienung A+B Taste
+grosser_sendersprung = 5              # Doppelbedienung A+B Taste, springt 2 x grosser_sendersprung weiter
 
-#################################
-# mpd m3u Radio-Datei Ablageort #
-#################################
-radio_playlist="/home/pi/raspiradio/conf/radio_sender.m3u"
+###########################
+# mpd m3u Senderablageort #
+###########################
+radio_playlist = "/home/pi/raspiradio/conf/radio_sender.m3u"
+
 
 ##############################################################################
 # mpc client - Passwort und Hostname fuer Bedienung via Tastenfeld und Handy #
 ##############################################################################
-PH="Raspi_radio123@RaspiRadio"                                           # Beispiel:  blabla@MeinRadio
+PH = "Raspi_radio123@RaspiRadio"                                                  # Beispiel:  blabla@MeinRadio
+
 
 #######################################################################################################
 # mpc Befehle in einem Dictionary - für Dictionarys ist kein "global" in Funktionsdefinitionen nötig. #
@@ -76,9 +78,9 @@ mpc = {
 }
 
 
-##################################################################
-# Für WLAN - Konfiguration - Mögliche Zeichen für WPA Schluessel #
-##################################################################
+#############################################################
+# W-LAN Konfigurator - Mögliche Zeichen für WPA  Schluessel #
+#############################################################
 zahlen = ['0','1','2','3','4','5','6','7','8','9']
 
 buchstaben = ['A','a','B','b','C','c','D','d','E','e','F','f','G','g','H','h','I','i',
@@ -88,11 +90,11 @@ buchstaben = ['A','a','B','b','C','c','D','d','E','e','F','f','G','g','H','h','I
 sonderzeichen = [' ','_','!','"','%','&','/','(',')','<','>','|','{','}',
                  '=','?','*',"'",'+','-','#',',','.',';',':','^']
 
-alleZeichen = zahlen + buchstaben + sonderzeichen # alle Zeichen
-sz = 10                                           # selektiertes Zeichen beim Programmstart
-aktuellesZeichen=""                               # Vorbelegung
-bez=""                                            # Vorbelegung - bisher eingewaehlte Zeichen
-ssid=""                                           # Vorbelegung
+alleZeichen = zahlen + buchstaben + sonderzeichen              # alle Zeichen
+sz = 10                                                        # selektiertes Zeichen beim Programmstart
+aktuellesZeichen = ""                                          # Vorbelegung
+bez = ""                                                       # Vorbelegung für bisher eingewaehlte Zeichen
+ssid = ""                                                      # Vorbelegung
 
 
 ##############################
@@ -105,9 +107,9 @@ from lcd_display import lcd
 import subprocess
 
 
-####################################################
-# Board-Pin Nummer verwenden (nicht GPIO Nummern!) #
-####################################################
+###############################
+# Board-Pin Nummern verwenden #
+###############################
 GPIO.setmode(GPIO.BOARD)
 
 
@@ -143,25 +145,28 @@ GPIO.setup(TasteMerker, GPIO.IN)                                 # Song merken i
 ###################
 GPIO.setup(Relaisausgang, GPIO.OUT)                              # Relaisausgang für Lautsprecher 12V Ein/Aus Standby
 
-global modus                                                     # An dieser Stelle global, da u.a. in WhileTrue Schleife geändert wird und über einige Funktionen abgefragt wird.
+
+###################
+# Modus Variable  #
+###################
+global modus                                                     # Hier global, da u.a. in Hauptschleife geändert wird und über einige Funktionen abgefragt wird.
 
 
-######################################################
-# FUNKTIONSDEFINITIONEN-HARDWARE-FUNKTIONEN & IPAdr. #
-######################################################
-
+###################################################
+# Hardware Funktionen inkl. & IP Adressermittlung #
+###################################################
 # Verstaerker Ein/Aus
 def VerstaerkerEin():
     GPIO.output(Relaisausgang, GPIO.LOW)                         # Relais auf Low und damit Verstärker einschalten
 def VerstaerkerAus():
     GPIO.output(Relaisausgang, GPIO.HIGH)                        # Relais auf High und damit Verstärker ausschalten
 
-# WLAN Adapter Ein
+# W-LAN Adapter Ein
 def wlanein():
     os.system("sudo ip link set wlan0 up")
-    time.sleep(9.0)                                              # Zeit für WLAN Hardware geben
+    time.sleep(9.0)                                              # Zeit für W-LAN Hardware geben
 
-# WLAN Adapter Aus
+# W-LAN Adapter Aus
 def wlanaus():
     os.system("sudo ip link set wlan0 down")
 
@@ -174,40 +179,34 @@ def anzaus():
 def ZeileC_ip_anzeige():
     ipadrBASH = "hostname -I | cut -f1 -d' '"                     # IP ermitteln
     ipadranz = subprocess.check_output([ipadrBASH], shell=True)   # IP in Variable
-    ipadranz = ipadranz.replace("\n", " ")                        # Umbruch durch Leerzeichen ersetzen
-    ipStellen= len(ipadranz)                                      # Länge der IP ermitteln um in Anzeigebox richtig anzuzeigen
-    if ipStellen == 14:                                           # Wenn letzte IP Stelle einstellig
-        zc = "   " + str(ipadranz) + "   "
-    elif ipStellen == 15:                                         # Wenn letzte IP Stelle zweistellig
-        zc = "   " + str(ipadranz) + "  "
-    elif ipStellen == 16:                                         # Wenn letzte IP Stelle dreistellig
-        zc = "   " + str(ipadranz) + " "
+    ipadranz = ipadranz.strip("\n")                               # Umbruch durch Leerzeichen ersetzen
+    ipStellen = len(ipadranz)                                     # Länge der IP ermitteln
+    if ipStellen > 1:                                             # Wenn IP vergeben
+        zc = str(ipadranz)
     else:
         zc = "   ---.---.---.---  "                               # wenn keine IP vergeben, dann davon ausgehen, dass Verbindung nicht möglich
     return zc                                                     # Rückgabe der Ip für Zeile B
 
 
-#########################################################
-#------------------WLAN Konfiguration-------------------#
-#########################################################
-
-# Wlan Konfiguration
+#######################
+# W-LAN Konfiguration #
+#######################
 def wlan_konf():
     global modus, sz, version
-    modus = 90                                                    # Wlan einrichten - Abfrage
+    modus = 90                                                    # W-LAN einrichten - Abfrage
     if wlan_ueber_radio_konfigurieren == True:
-        za = "WLAN einrichten?"
-        zb = "Dann jetzt (C)Taste"
-        zc = "länger drücken!"
-        zd = "Sonst kurz warten."
+        za = "W-LAN einrichten?   "
+        zb = "Dann jetzt          "
+        zc = "    >>> (C)Taste--->"
+        zd = "gedrückt halten.   "
         anzeige(za,zb,zc,zd)
-        time.sleep(8)
+        time.sleep(5)
         if (GPIO.input(TasteModus) == GPIO.LOW):
             modus = 91
-            za = "Mit den (A/B)Tasten"                            # WLAN Konfigurator - Bedienhinweis
+            za = "Mit den (A/B)Tasten "                           # W-LAN Konfigurator - Bedienhinweis
             zb = "zum Zeichen.(C)Taste"
-            zc = "wählt das Zeichen."
-            zd = "(D)Taste beendet."
+            zc = "wählt das Zeichen. "
+            zd = "(D)Taste beendet.   "
             anzeige(za,zb,zc,zd)
             time.sleep(5)
             ZeilenABCD_WLAN_konf_SSID_eingabe()
@@ -223,15 +222,16 @@ def Buchstabenanzeige(selektpos):
     anzeige_einzeilig(buchstabenzeile, 2)
     aktuellesZeichen=alleZeichen[selektpos]
 
-# Schreiben in WLAN System-Konfigurationsdatei
+# Schreiben in W-LAN System-Konfigurationsdatei
 def wpasupplicant(name, psw):
     eintrag='\nnetwork={\n         ssid="' + name + '"\n' + '         psk="' + psw +'"\n}' + '\n'
     file = open("/etc/wpa_supplicant/wpa_supplicant.conf","a")
     file.write(eintrag)
     file.close()
-    name =""                                                       # Variable nach dem Schreiben leeren
-    psw  =""                                                       # Variable nach dem Schreiben leeren
-# WLAN Konfigurator - SSID eingeben
+    name = ""                                                      # Variable nach dem Schreiben leeren
+    psw  = ""                                                      # Variable nach dem Schreiben leeren
+
+# W-LAN Konfigurator - SSID eingeben
 def ZeilenABCD_WLAN_konf_SSID_eingabe():
     za = "SSID eingeben:"
     zb = " "
@@ -240,7 +240,7 @@ def ZeilenABCD_WLAN_konf_SSID_eingabe():
     anzeige(za,zb,zc,zd)
     Buchstabenanzeige(sz)
 
-# WLAN Konfigurator - WPA Key eingeben
+# W-LAN Konfigurator - WPA Key eingeben
 def ZeilenABCD_WLAN_konf_Key_eingabe():
     za = "WPA  Key eingeben:"
     zb = " "
@@ -249,21 +249,20 @@ def ZeilenABCD_WLAN_konf_Key_eingabe():
     anzeige(za,zb,zc,zd)
     Buchstabenanzeige(sz)
 
-# WLAN Konfigurator - Key weniger als 8 Zeichen
+# W-LAN Konfigurator - Key weniger als 8 Zeichen
 def ZeilenABCD_WLAN_konf_Zeichen8():
-    za = "Key kleiner"
-    zb = " 8 Zeichen"
-    zc = "nicht zugelassen!"
-    zd = "Eingaben ungültig!"
+    za = "Ein Key kleiner     "
+    zb = "8 Zeichen ist nicht "
+    zc = "zugelassen, die Ein-"
+    zd = "gabe ist ungültig! "
     anzeige(za,zb,zc,zd)
     time.sleep(3.0)
 
-    
-##########################################
-# FUNKTIONSDEFINITIONEN-MODUS-FUNKTIONEN #
-##########################################
 
-# Radio oder MP3 Modus - (C)Taste - bzw. in WLAN Konfigurationsmodus (Modus 91/92) - Buchstabenwahl
+####################
+# Modus-Funktionen #
+####################
+# Radio oder MP3 Modus - (C)Taste - bzw. in W-LAN Konfigurationsmodus (Modus 91/92) - Buchstabenwahl
 def RAModeOrMP3Mode( pin ):
     global modus, aktuelles_Zeichen, bez
     if modus == 91 or modus == 92:
@@ -283,40 +282,40 @@ def RAModeOrMP3Mode( pin ):
 def RUMode():
     global modus
     modus = 0
-    VerstaerkerEin()                                                # Verstärker ein
-    os.system(mpc["clear"])                                         # mpc clear
-    os.system(mpc["update"])                                        # mpc update
-    os.system('mpg321 /home/pi/raspiradio/conf/StartUp.mp3')        # Start-Sound abspielen
+    VerstaerkerEin()                                                 # Verstärker ein
+    os.system(mpc["clear"])                                          # mpc clear
+    os.system(mpc["update"])                                         # mpc update
+    os.system('mpg321 /home/pi/raspiradio/conf/StartUp.mp3')         # Start-Sound abspielen
 
 # Radio-Modus
 def RAMode(): 
     global modus, sender
-    if (modus==0) or (modus ==31) or (modus ==32):
+    if (modus == 0) or (modus == 31) or (modus == 32):
         modus = 1
-        wlanein()                                                   # WLAN Adapter ein
-    modus = 1                                                       # Modus RAMode
-    VerstaerkerEin()                                                # Verstärker ein
-    os.system(mpc["clear"])                                         # mpc clear
-    os.system(mpc["loadlist"])                                      # mpc load list
-    os.system(mpc["play"] + str(sender))                            # mpc play letzten Sender
+        wlanein()                                                    # W-LAN Adapter ein
+    modus = 1                                                        # Modus RAMode
+    VerstaerkerEin()                                                 # Verstärker ein
+    os.system(mpc["clear"])                                          # mpc clear
+    os.system(mpc["loadlist"])                                       # mpc load list
+    os.system(mpc["play"] + str(sender))                             # mpc play letzten Sender
 
 # MP3 Modus
 def MP3Mode():
     global modus
-    modus = 2                                                       # Modus MP3Mode
-    os.system(mpc["update"])                                        # mpc update
-    os.system(mpc["clear"])                                         # mpc clear
-    os.system(mpc["addmusic"])                                      # mpc addmusic
-    os.system(mpc["shuffle"])                                       # mpc shuffle playliste zusammenstellen
-    os.system(mpc["play"] + "1")                                    # mpc play mp3s vom ersten Song an
+    modus = 2                                                        # Modus MP3Mode
+    os.system(mpc["update"])                                         # mpc update
+    os.system(mpc["clear"])                                          # mpc clear
+    os.system(mpc["addmusic"])                                       # mpc addmusic
+    os.system(mpc["shuffle"])                                        # mpc shuffle playliste zusammenstellen
+    os.system(mpc["play"] + "1")                                     # mpc play mp3s vom ersten Song an
 
-# Standby Modus - (D)Taste   bzw.      in der WLAN Konfiguration (Modus 91/92) - Eingabe fertig
+# Standby Modus - (D)Taste bzw. in der W-LAN Konfiguration (Modus 91/92) - Eingabe fertig
 def SBMode( pin ):
     global modus, bez, ssid
     if modus == 91:
         ssid=bez
         modus = 92
-        bez =""
+        bez = ""
         zd = "SSID - übernommen!"
         anzeige_einzeilig(zd,4)
         time.sleep(2)
@@ -325,10 +324,10 @@ def SBMode( pin ):
         key=bez
         if len(key) < 8:                                              # zu wenige eingegebene Zeichen im Key
             modus = 99
-            bez=""
+            bez= ""
         else:
             modus = 93
-            bez=""                                                    # zur Sicherheit leeren
+            bez= ""                                                   # zur Sicherheit leeren
             zd = "KEY - übernommen!"
             anzeige_einzeilig(zd,4)
             time.sleep(3)
@@ -343,7 +342,7 @@ def SBMode( pin ):
         else:                                                         # Standby einleiten
             modus = 31                                                # SBMode 3 1     In den Standby
             os.system(mpc["stop"])                                    # mpc Abspielen stoppen
-            wlanaus()                                                 # WLAN Adapter aus
+            wlanaus()                                                 # W-LAN Adapter aus
             VerstaerkerAus()                                          # Verstärker aus
 
 # Reboot Modus
@@ -363,17 +362,16 @@ def SDMode():
     VerstaerkerAus()                                                  # Verstärker Aus
 
 
-############################
-# ANZEIGE MODUS FUNKTIONEN #
-############################
-
+######################
+# Anzeige-Funktionen #
+######################
 # Allgemeine Anzeige-Funktion für alles 4 Zeilen
-def anzeige(ZeileA,ZeileB,ZeileC,ZeileD):         # Funktionsdefinitionsdefinition für Anzeigeausgabe
-    global my_lcd                                 # Beispiel:
-    my_lcd.display_string(ZeileA, 1)              #           ---<12:13>-<*** >---     ZeileA  zeit & Wlan Empfangsqualität qual
-    my_lcd.display_string(ZeileB, 2)              #           (06) NDR2-Nieders.       ZeileB  StationsNummer st und SenderName sn max. 15 Zeichen
-    my_lcd.display_string(ZeileC, 3)              #           Die Fantastischen Vi     ZeileC  Sender- Song Info als Lauftext
-    my_lcd.display_string(ZeileD, 4)              #           -<12.12.2017> <Di.>-     ZeileD  datum und Wochentag wt
+def anzeige(ZeileA,ZeileB,ZeileC,ZeileD):                             # Funktionsdefinitionsdefinition für Anzeigeausgabe
+    global my_lcd                                                     # Beispiel:
+    my_lcd.display_string(ZeileA, 1)                                  #           ---<12:13>-<*** >---     ZeileA  zeit & W-LAN Empfangsqualität qual
+    my_lcd.display_string(ZeileB, 2)                                  #           (06) NDR2-Nieders.       ZeileB  StationsNummer st und SenderName sn max. 15 Zeichen
+    my_lcd.display_string(ZeileC, 3)                                  #           Die Fantastischen Vi     ZeileC  Sender- Song Info als Lauftext
+    my_lcd.display_string(ZeileD, 4)                                  #           -<21.02.2019> <Di.>-     ZeileD  datum und Wochentag wt
 
 # Allgemeine Anzeige-Funktion für einzeilige Änderungen
 def anzeige_einzeilig(string, zeile):
@@ -381,126 +379,119 @@ def anzeige_einzeilig(string, zeile):
 
 # Zeilen ABCD RUMode
 def ZeilenABCD_RUMode(v):
+
+    # Bedienungsanleitung
+    if Bedienanleitung_anzeigen == True:
+        za = "Bedienungsanleitung "
+        zb = "anzeigen? Dann nun  "
+        zc = "    >>> (C)Taste--->"
+        zd = "gedrückt halten.   "
+        anzeige(za,zb,zc,zd)
+        time.sleep(5)
+        if (GPIO.input(TasteModus) == GPIO.LOW): 
+            za = "--------------------"
+            zb = "Bedienungsanleitung "
+            zc = "  wird gestartet.   "
+            zd = "--------------------"
+            anzeige(za,zb,zc,zd)                                       # Allgemeiner Aufruf der Anzeigefunktion mit Argumentübergabe
+            time.sleep(4)
+
+            za = "    >>> (A)Taste--->"
+            zb = "                    "
+            zc = "Sender oder Song    "
+            zd = "nach vorne springen "
+            anzeige(za,zb,zc,zd)
+            time.sleep(4)
+
+            za = "                    "
+            zb = "    >>> (B)Taste--->"
+            zc = "Sender oder Song    "
+            zd = "nach hinten springen"
+            anzeige(za,zb,zc,zd)
+            time.sleep(4)
+
+            za = "    >>> (A)Taste--->"
+            zb = "    >>> (B)Taste--->"
+            zc = "Springt mehrere     "
+            zd = "Sender weiter       "
+            anzeige(za,zb,zc,zd)
+            time.sleep(4)
+
+            za = "Wechselt zwischen   "
+            zb = "Radio und mp3-Mix   "
+            zc = "    >>> (C)Taste--->"
+            zd = "                    "
+            anzeige(za,zb,zc,zd)
+            time.sleep(4)
+
+            za = "Wechselt in den     "
+            zb = "Standby Betrieb     "
+            zc = "                    "
+            zd = "    >>> (D)Taste--->"
+            anzeige(za,zb,zc,zd)
+            time.sleep(4)
+
+            za = "Radio               "
+            zb = "    >>> (B)Taste--->"
+            zc = "runterfahren        "
+            zd = "    >>> (D)Taste--->"
+            anzeige(za,zb,zc,zd)
+            time.sleep(4)
+
+            za = "    >>> (A)Taste--->"
+            zb = "Radio               "
+            zc = "neu starten         "
+            zd = "    >>> (D)Taste--->"
+            anzeige(za,zb,zc,zd)
+            time.sleep(4)
+
+            za = "   >>> (X)Taste---< "
+            zb = "Favoritsender 1     "
+            zc = "Langes halten       "
+            zd = "speichert!          "
+            anzeige(za,zb,zc,zd)
+            time.sleep(4)
+
+            za = "Favoritsender 2     "
+            zb = "   >>> (Y)Taste---< "
+            zc = "Langes halten       "
+            zd = "speichert!          "
+            anzeige(za,zb,zc,zd)
+            time.sleep(4)
+
+            za = "Schreibt akt. Radio-"
+            zb = "song in Merkliste.  "
+            zc = "   >>> (Z)Taste---< "
+            zd = "smb: conf/merk.txt  " 
+            anzeige(za,zb,zc,zd)
+            time.sleep(4)
+
     anzahl_sender()
     # SD Karte freier Speicher in Prozent
-    verw_speicherBASH="df -h | grep /dev/root | cut -b 38-39"                                        # Befehl zum Auslesen des belegten Speichers in Prozent
-    verw_speicher = subprocess.check_output([verw_speicherBASH], shell=True)                         # Auslesen der prozentualen Belegung
-    verw_speicher = verw_speicher.replace("\n", " ")                                                 # Umbruch durch Leerzeichen ersetzen
+    verw_speicherBASH = "df -h | grep /dev/root | cut -b 38-39"                     # Befehl zum Auslesen des belegten Speichers in Prozent
+    verw_speicher = subprocess.check_output([verw_speicherBASH], shell=True)        # Auslesen der prozentualen Belegung
+    verw_speicher = verw_speicher.strip("\n")                                       # Umbruch durch Leerzeichen ersetzen
     frei_speicher = 100 - int(verw_speicher)
 
     # Version
     za = "--------------------"
     zb = "    RasPi Radio     "
-    zc = "   Software " + str(v) + "    "
+    zc = str(v)
     zd = "--------------------"
-    anzeige(za,zb,zc,zd)                                                      # Aufruf der Anzeige mit Übergabe der Argumente
+    anzeige(za,zb,zc,zd)
     time.sleep(3)
 
     # Speicherplatz
     zb = "   Radiospeicher:   "
     zc = "      " + str(frei_speicher) + "% frei      "
-    anzeige(za,zb,zc,zd)                                                      # Aufruf der Anzeige mit Übergabe der Argumente
+    anzeige(za,zb,zc,zd)
     time.sleep(3)
-
-    if Bedienanleitung_anzeigen == True:
-        # Bedienungsanleitung
-
-        za = "Es folgt eine kurze "
-        zb = "Bedienungsanleitung."
-        zc = "   Danach geht es   "
-        zd = "   gleich weiter!   "
-
-        anzeige(za,zb,zc,zd)                                                  # Aufruf der Anzeige mit Übergabe der Argumente
-        time.sleep(3)
-
-        anzeige(za,zb,zc,zd)                                                  # Aufruf der Anzeige mit Übergabe der Argumente
-        time.sleep(3)
-        za = "    >>> (A)Taste--->"
-        zb = "                    "
-        zc = "Sender oder Song    "
-        zd = "nach vorne springen "
-
-        anzeige(za,zb,zc,zd)                                                  # Aufruf der Anzeige mit Übergabe der Argumente
-        time.sleep(3)
-
-        za = "                    "
-        zb = "    >>> (B)Taste--->"
-        zc = "Sender oder Song    "
-        zd = "nach hinten springen"
-
-        anzeige(za,zb,zc,zd)                                                  # Aufruf der Anzeige mit Übergabe der Argumente
-        time.sleep(3)
-
-        za = "    >>> (A)Taste--->"
-        zb = "    >>> (B)Taste--->"
-        zc = "Springt mehrere     "
-        zd = "Sender weiter       "
-
-        anzeige(za,zb,zc,zd)                                                   # Aufruf der Anzeige mit Übergabe der Argumente
-        time.sleep(3)
-
-        za = "Wechselt zwischen   "
-        zb = "Radio und mp3-Mix   "
-        zc = "    >>> (C)Taste--->"
-        zd = "                    "
-
-        anzeige(za,zb,zc,zd)                                                   # Aufruf der Anzeige mit Übergabe der Argumente
-        time.sleep(3)
-
-        za = "Wechselt in den     "
-        zb = "Standby Betrieb     "
-        zc = "                    "
-        zd = "    >>> (D)Taste--->"
-
-        anzeige(za,zb,zc,zd)                                                   # Aufruf der Anzeige mit Übergabe der Argumente
-        time.sleep(3)
-
-        za = "Radio               "
-        zb = "    >>> (B)Taste--->"
-        zc = "runterfahren        "
-        zd = "    >>> (D)Taste--->"
-
-        anzeige(za,zb,zc,zd)                                                   # Aufruf der Anzeige mit Übergabe der Argumente
-        time.sleep(3)
-
-        za = "    >>> (A)Taste--->"
-        zb = "Radio               "
-        zc = "neu starten         "
-        zd = "    >>> (D)Taste--->"
-
-        anzeige(za,zb,zc,zd)                                                   # Aufruf der Anzeige mit Übergabe der Argumente
-        time.sleep(3)
-
-        za = "   >>> (X)Taste---< "
-        zb = "Favoritsender 1     "
-        zc = "Langes halten       "
-        zd = "speichert!          "
-
-        anzeige(za,zb,zc,zd)                                                   # Aufruf der Anzeige mit Übergabe der Argumente
-        time.sleep(3)
-
-        za = "Favoritsender 2     "
-        zb = "   >>> (Y)Taste---< "
-        zc = "Langes halten       "
-        zd = "speichert!          "
-
-        anzeige(za,zb,zc,zd)                                                   # Aufruf der Anzeige mit Übergabe der Argumente
-        time.sleep(3)
-
-        za = "Schreibt akt. Radio-"
-        zb = "song in Merkliste.  "
-        zc = "   >>> (Z)Taste---< "
-        zd = "smb: conf/merk.txt  " 
-
-        anzeige(za,zb,zc,zd)                                                   # Aufruf der Anzeige mit Übergabe der Argumente
-        time.sleep(3)
 
     # IP Anzeigen
     za = "--------------------"
     zb = "     IP Adresse:    "
-    zc = ZeileC_ip_anzeige()                                                   # Aufruf IP-Ermitteln
+    zc = ZeileC_ip_anzeige()                                                         # Aufruf IP-Ermitteln
     zd = "--------------------"
-
     anzeige(za,zb,zc,zd)
     time.sleep(3)
 
@@ -509,46 +500,42 @@ def ZeilenABCD_RUMode(v):
     zb = "    Starte Radio    "
     zc = "  mit (" + str(AnzSender) + ") Sendern  "
     zd = "--------------------"
-
-    anzeige(za,zb,zc,zd)                                                   # Aufruf der Anzeige mit Übergabe der Argumente
+    anzeige(za,zb,zc,zd)
     time.sleep(3)
 
-
 # ZeileA_RAMode_MP3Mode_SBMode
-def ZeileA_RAMode_MP3Mode_SBMode():                                        # Funktionsdefinition zum Ermitteln des Strings für Zeile A im Radio-, Offline- & Standby-Modus
+def ZeileA_RAMode_MP3Mode_SBMode():                                                  # Funktionsdefinition zum Ermitteln des Strings für Zeile A im Radio-, Offline- & Standby-Modus
     # Zeit
-    zeit = time.strftime("%H:%M")                                          # Aktuelle Zeit als String
-    # WLAN Signal ermitteln
-    slBASH="iwconfig wlan0 | grep Signal | awk '{print $4}' | cut -c7-8"   # Bash-Befehl zur Ermittlung des SignalLevels
+    zeit = time.strftime("%H:%M")                                                    # Aktuelle Zeit als String
+    # W-LAN Signal ermitteln
+    slBASH = "iwconfig wlan0 | grep Signal | awk '{print $4}' | cut -c7-8"           # Bash-Befehl zur Ermittlung des SignalLevels
     try:
-        sl = int(subprocess.check_output([slBASH], shell=True))            # Signallevel als Integer ermitteln, wenn WLAN weg, dann kurzzeitig keine Wandlung möglich da ValueError -> dann except.
-        if (sl <=25) and (sl >0):                                          # Signalstärke sehr schlecht
+        sl = int(subprocess.check_output([slBASH], shell=True))                      # Signallevel als Integer ermitteln, wenn W-LAN weg, dann kurzzeitig keine Wandlung möglich da ValueError -> dann except.
+        if (sl <=25) and (sl >0):                                                    # Signalstärke sehr schlecht
             qual = "*   "
-        elif (sl  >25) and (sl <51):                                       # Signalstärke schlecht
+        elif (sl  >25) and (sl <51):                                                 # Signalstärke schlecht
             qual = "**  "
-        elif (sl >51) and  (sl <76):                                       # Signalstärke gut
+        elif (sl >51) and  (sl <76):                                                 # Signalstärke gut
             qual = "*** "
-        elif (sl >=76):                                                    # Signalstärke sehr gut
+        elif (sl >=76):                                                              # Signalstärke sehr gut
             qual = "****"
         else:
             qual = "    "
-        za = "--<" + zeit + ">---<" + qual + ">--"                         # Zeilen-String zusammenstellen
+        za = "--<" + zeit + ">---<" + qual + ">--"                                   # Zeilen-String zusammenstellen
         return za
     except ValueError:
         za = "--<" + zeit + ">---<    >--"
+        time.sleep(4.0)
         return za
 
-
-
 # ZeileB_RAMode
-def ZeileB_RAMode():                                                         # Funktionsdefinition zum Ermitteln des Strings für Zeile B im RadioModus
+def ZeileB_RAMode():                                                                 # Funktionsdefinition zum Ermitteln des Strings für Zeile B im RadioModus
     global sender
-    stBASH="mpc -h " + str(PH) + " -f %name% | grep playing | cut -c12-13"   # Bash-mpc Befehl mit grep&cut zum SenderstationsNr.-Auslesen
-    st_tmp = subprocess.check_output([stBASH], shell=True)                   # Sendernummer auslesen
-    st_tmp = st_tmp.replace("\n", " ")                                       # Umbruch durch Leerzeichen ersetzen
-    st_tmp = st_tmp.replace("/" , " ")                                       # Sendernummer einstellig dann "/" raus
-    if st_tmp == "":                                                         # Wenn der Sender mal länger zum Starten benötigt
-        zb = "  Warte auf Sender  "                                          # Dann Sendersuche anzeigen
+    stBASH = "mpc -h " + str(PH) + " -f %name% | grep playing | cut -c12-13"         # Bash-mpc Befehl mit grep&cut zum SenderstationsNr.-Auslesen
+    st_tmp = subprocess.check_output([stBASH], shell=True)                           # Sendernummer auslesen
+    st_tmp = st_tmp.strip("\n/")                                                     # Umbruch entfernen, Slash entfernen (bei einstelligen Sendern)
+    if st_tmp == "":                                                                 # Wenn der Sender mal länger zum Starten benötigt oder keine W-LAN Verbindung besteht.
+        zb = "  Warte auf Sender  "                                                  # Dann Sendersuche anzeigen
         return zb
         exit
     else:
@@ -560,8 +547,8 @@ def ZeileB_RAMode():                                                         # F
             else:
                 st = str(st_int)                                                     # Wenn ausgelesene Sendernummer zweistellig dann 1 zu 1 in st variable
             st_anwahl = st_int -1                                                    # Senderstationsnummer -1 um in der Liste den richtigen Sendernamen zu wählen
-                                                                                     # Sendernamen aus playlist-Kommentaren auslesen
-            snBASH="awk '/http/ {print $3}' " + str(radio_playlist)                  # Befehl zur Ermittlung der Sendernamen
+            # Sendernamen aus playlist-Kommentaren auslesen
+            snBASH = "awk '/http/ {print $3}' " + str(radio_playlist)                # Befehl zur Ermittlung der Sendernamen
             sn = subprocess.check_output([snBASH], shell=True)                       # Auslesen der Sendernamen
             sn = sn.split()                                                          # Sendernamen umwandeln als Liste
             snl = len(sn[st_anwahl])                                                 # Sendernamenlänge des durch die Stationsnummer ermittelten Namens
@@ -573,37 +560,36 @@ def ZeileB_RAMode():                                                         # F
             zb = "(" + st + ") " + sn[st_anwahl]                                     # String Sendernummer und Namen
             return zb                                                                # Rückgabe String für Zeile
         except:                                                                      # Falls es Probleme bei der Sendernummererkennung gibt
-            zb = "Sender nicht erkannt"                                              # z.B. wenn Radiosenderanzahl in radio_sender.m2u im laufenden Betrieb unter aktuellen Sender dezimiert wird
+            zb = "Sender nicht erkannt"                                              # z.B. wenn Radiosenderanzahl in radio_sender.m2u im laufenden Betrieb dezimiert wird
             return zb
 
 # ZeileC_RAMode_MP3Mode
-def ZeileC_RAMode_MP3Mode():                                                     # Funktionsdefinition zum Ermitteln des Strings für Zeile C im RadioModus & MP3 Modus
+def ZeileC_RAMode_MP3Mode():                                                         # Funktionsdefinition zum Ermitteln des Strings für Zeile C im RadioModus & MP3 Modus
     info_tmp = subprocess.check_output([mpc["songinfo"]], shell=True)
     if not "#" in info_tmp:
-        info_tmp = info_tmp.replace("\n", " ")                                   # Umbruch durch Leerzeichen ersetzen und einen Doppelpunkt an erste Stelle
-        info_tmp = info_tmp.strip()                                              # Schmierzeichen entfernen
+        info_tmp = info_tmp.strip("\n")                                              # Umbruch raus
+        info_tmp = info_tmp.strip()                                                  # Schmierzeichen entfernen
         info_tmp = ":" + info_tmp
-        ldp = info_tmp.rfind(":")                                                # Position des letzten Doppelpunktes im String suchen, gibt es sonst keinen, wird der angefügte : gefunden.
-        start = ldp + 1                                                          # Start-Index für String Splicing
-        zc_tmp = info_tmp[start:]                                                # Von Start-Index String schreiben
-        zc_tmp = zc_tmp.lstrip()                                                 # Leerzeichen am Anfang entfernen
-        zc_tmp_laenge = len(zc_tmp)                                              # Länge des übrigen Strings ermitteln
-        return zc_tmp, zc_tmp_laenge                                             # String und ANzahl Zeichen zurückgeben
+        ldp = info_tmp.rfind(":")                                                    # Position des letzten Doppelpunktes im String suchen, gibt es sonst keinen, wird der angefügte : gefunden.
+        start = ldp + 1                                                              # Start-Index für String Splicing
+        zc_tmp = info_tmp[start:]                                                    # Von Start-Index String schreiben
+        zc_tmp = zc_tmp.lstrip()                                                     # Leerzeichen am Anfang entfernen
+        zc_tmp_laenge = len(zc_tmp)                                                  # Länge des übrigen Strings ermitteln
+        return zc_tmp, zc_tmp_laenge                                                 # String und ANzahl Zeichen zurückgeben
     else:
-        return "---", 3                                                          # Falls keine Senderinfo vorliegt, also # zwischen link und Sendernamen gefunden wird, dann ---
-
+        return "---", 3                                                              # Falls keine Senderinfo vorliegt, also # zwischen link und Sendernamen gefunden wird, dann ---
 
 # ZeileD_RAMode_MP3Mode_SBMode
-def ZeileD_RAMode_MP3Mode_SBMode():                                              # Funktionsdefinition zum Ermitteln des Strings für Zeile D im Radiomodus
+def ZeileD_RAMode_MP3Mode_SBMode():                                                  # Funktionsdefinition zum Ermitteln des Strings für Zeile D im Radiomodus
     # Wochentag
-    WoTaNa = ["Mo.","Di.","Mi.","Do.","Fr.","Sa.","So."]                         # Selbst definierte WochenTagNamen
-    WoTaNu = date.today().weekday()                                              # WochenTagNummer ermitteln 0=Montag 6=Sonntag
-    wt = WoTaNa[WoTaNu]                                                          # Wochentagsabkürzung ermitteln
+    WoTaNa = ["Mo.","Di.","Mi.","Do.","Fr.","Sa.","So."]                             # Selbst definierte WochenTagNamen
+    WoTaNu = date.today().weekday()                                                  # WochenTagNummer ermitteln 0=Montag 6=Sonntag
+    wt = WoTaNa[WoTaNu]                                                              # Wochentagsabkürzung ermitteln
     # Datum
-    datum = time.strftime("%d.%m.%Y")                                            # Datum Format
+    datum = time.strftime("%d.%m.%Y")                                                # Datum Format
     # Rückgabe für Zeile D
-    zd = "-<" + datum + ">-<" + wt + ">-"                                        # Zeilen-String zusammenstellen
-    return zd                                                                    # Rückgabe String für Zeile
+    zd = "-<" + datum + ">-<" + wt + ">-"                                            # Zeilen-String zusammenstellen
+    return zd                                                                        # Rückgabe String für Zeile
 
 # ZeilenBC_MP3Mode
 def ZeileB_MP3Mode():
@@ -652,16 +638,15 @@ def ZeileBC_MERK():
 
 
 ############################
-# SENDERWECHSEL UND MERKER #
+# Senderwechsel und Merker #
 ############################
-
-# Senderwechsel/Songwechsel hoch SWH bzw. in WLAN Konfigurationsmodus  - Buchstabe vor
+# Senderwechsel/Songwechsel hoch SWH bzw. in W-LAN Konfigurationsmodus  - Buchstabe vor
 def SWH( pin ):
     global sender, AnzSender, modus, sz, grosser_sendersprung
     if modus == 91 or modus == 92:
         sz = sz + 1
         Buchstabenanzeige(sz)
-    elif modus ==1:                                                                       # Das wird im Radio Modus gemacht
+    elif modus == 1:                                                                      # Das wird im Radio Modus gemacht
         anzahl_sender()                                                                   # Anzahl Sender aktualisieren
         time.sleep(0.3)                                                                   # Zeit für Doppelbedienung geben,
         if (GPIO.input(TasteHoch) == GPIO.LOW) and (GPIO.input(TasteRunter) == GPIO.LOW): # Wenn Hoch und Runter zusammen gedrückt ist
@@ -674,13 +659,13 @@ def SWH( pin ):
     elif modus == 2:                                                                      # Das wird im MP3 Modus gemacht
         os.system(mpc["next"])
 
-# Senderwechsel/Songwechsel runter SWR bzw. in WLAN Konfigurationsmodus  - Buchstabe zurück
+# Senderwechsel/Songwechsel runter SWR bzw. in W-LAN Konfigurationsmodus  - Buchstabe zurück
 def SWR( pin ):
     global sender, AnzSender, modus, sz, grosser_sendersprung
     if modus == 91 or modus == 92:
         sz = sz - 1
         Buchstabenanzeige(sz)
-    elif modus ==1:                                                                       # Das wird im Radio Modus gemacht
+    elif modus == 1:                                                                      # Das wird im Radio Modus gemacht
         anzahl_sender()                                                                   # Anzahl Sender aktualisieren
         time.sleep(0.3)                                                                   # Zeit für Doppelbedienung geben
         if (GPIO.input(TasteHoch) == GPIO.LOW) and (GPIO.input(TasteRunter) == GPIO.LOW): # Wenn Hoch und Runter zusammen gedrückt ist
@@ -702,7 +687,7 @@ def favorit1( pin ):
         time.sleep(0.3)                                                                   # Zeit für Doppelbedienung geben
         if (GPIO.input(TasteFavoritsender1) == GPIO.LOW):                                 # Wenn Favorit Taste X länger gedrückt, speichern
             fav1 = sender                                                                 # Aktuellen Sender auf Taste speichern
-            modus = 6                                                                     # Anzeige Favorit 1 übernommen
+            modus = 6                                                                     # Anzeige Favorit übernommen
         else:                                                                             # Favorit apspielen
             sender = fav1
             os.system(mpc["play"] + str(sender))
@@ -716,7 +701,7 @@ def favorit2( pin ):
         time.sleep(0.3)                                                                   # Zeit für Doppelbedienung geben
         if (GPIO.input(TasteFavoritsender2) == GPIO.LOW):                                 # Wenn Favorit Taste Y länger gedrückt, speichern
             fav2 = sender                                                                 # Aktuellen Sender auf Taste speichern
-            modus = 6                                                                     # Anzeige Favorit 2 übernommen
+            modus = 6                                                                     # Anzeige Favorit übernommen
         else:                                                                             # Favorit apspielen
 	        sender = fav2
 	        os.system(mpc["play"] + str(sender))
@@ -728,8 +713,8 @@ def song_merken( pin ):                                                         
     global modus, sender
     if modus == 1 :
 	song, anzzeichen = ZeileC_RAMode_MP3Mode()
-	file = open("/home/pi/raspiradio/conf/merk.txt","a+")
-        file.write(song + "\n")
+	file = open("/home/pi/raspiradio/conf/merk.txt","a+")                             # Datei öffnen, wenn nicht vorhanden dann anlegen.
+        file.write(song + "\n")                                                           # Song und Umbruch schreiben
         file.close()
         modus = 8
     elif modus == 2 :
@@ -738,34 +723,32 @@ def song_merken( pin ):                                                         
 # Anzahl der gefundenen Sender aus Sender-Datei
 def anzahl_sender():
     global AnzSender
-    AnzSenderBASH = "ls | awk '/http/ {print $3}' " + str(radio_playlist) + " | wc -l"               # Befehl-Anzahl der RadioSender aus mpd radio playlist
-    AnzSender= subprocess.check_output([AnzSenderBASH], shell=True)                                  # Anzahl Sender ermitteln mit AWK Befehl
-    AnzSender= AnzSender.replace("\n", " ")                                                          # Umbruch durch Leerzeichen ersetzen
-    AnzSender= int(AnzSender)                                                                        # Umwandeln in int
+    AnzSenderBASH = "ls | awk '/http/ {print $3}' " + str(radio_playlist) + " | wc -l"     # Befehl-Anzahl der RadioSender aus mpd radio playlist
+    AnzSender = subprocess.check_output([AnzSenderBASH], shell=True)                       # Anzahl Sender ermitteln mit AWK Befehl
+    AnzSender = AnzSender.strip("\n")                                                      # Umbruch raus
+    AnzSender = int(AnzSender)                                                             # Umwandeln in int
 
 
 ####################
 # Beim Systemstart #
 ####################
-
-a=0                            # Einmalige Initialisierung für Zeile C Startindex der Ausgabe
-z=20                           # Einmalige Initialisierung für Zeile C Endindex der Ausgabe
-fav1=1                         # Vorbelegung Favoritsender1 beim Boot
-fav2=2                         # Vorbelegung Favoritsender2 beim Boot
+a = 0                          # Einmalige Initialisierung für Zeile C Startindex der Ausgabe
+z = 20                         # Einmalige Initialisierung für Zeile C Endindex der Ausgabe
+fav1 = 1                       # Vorbelegung Favoritsender1 beim Boot
+fav2 = 2                       # Vorbelegung Favoritsender2 beim Boot
 AnzSender = 0                  # Senderanzahl als GLOBAL Variable da Interrupt-Aufrufe keine Rückgabe liefern, 0 als Vorbelegung
 sender = 1                     # Aktuelle Sendernummer als GLOBAL Variable da Interrupt-Aufrufe keine Rückgabe liefern, 1 als erster Sender nach Start
 my_lcd = lcd()                 # LCD initialisieren
-wlan_konf()                    # ggf. WLAN konfigurieren
+wlan_konf()                    # ggf. W-LAN konfigurieren
 if modus == 90:
     RUMode()                   # RunUp sobald 
     ZeilenABCD_RUMode(version) # RunUp Anzeige mit Übergabe der Versionsnummer
     RAMode()                   # Radio nach RunUp ohne Interrupt starten
 
 
-##############################################################################################
-#-----TastenInerrupts------Multithreadingfähig------While Schleife läuft parallel weiter-----#
-##############################################################################################
-    
+######################################
+# TastenInerrupts mit Multithreading #
+######################################
 # Taste A Event Senderwechsel hoch
 GPIO.add_event_detect(TasteHoch, GPIO.FALLING, callback=SWH, bouncetime = 200)
 # Taste B Event Senderwechsel runter
@@ -787,11 +770,10 @@ GPIO.add_event_detect(TasteMerker, GPIO.FALLING, callback=song_merken, bouncetim
 #################
 # Dauerschleife #
 #################
-
 while True:
     try:
 
-        if modus==1:                                          # wenn RAMode
+        if modus == 1:                                        
             za = ZeileA_RAMode_MP3Mode_SBMode()
             zb = ZeileB_RAMode()
             zc_tmp, zc_tmp_len = ZeileC_RAMode_MP3Mode()      # Gibt die Sender-Song Info zurück n Zeichen
@@ -808,7 +790,7 @@ while True:
                 zc = zc_tmp                                   # Wenn Text nicht laenger als Displayzeichen dann normal ausgeben
             zd = ZeileD_RAMode_MP3Mode_SBMode()
             anzeige(za,zb,zc,zd)
-        elif modus==2:                                        # wenn MP3Mode
+        elif modus == 2:                                      
             za = ZeileA_RAMode_MP3Mode_SBMode()
             zb = ZeileB_MP3Mode()
             zc_tmp, zc_tmp_len = ZeileC_RAMode_MP3Mode()      # Gibt die Sender-Song Info zurück n Zeichen
@@ -825,7 +807,7 @@ while True:
                 zc = zc_tmp
             zd = ZeileD_RAMode_MP3Mode_SBMode()
             anzeige(za,zb,zc,zd)
-        elif modus==31:                                       # wenn SBMode Phase1
+        elif modus == 31:                                       
             za = ZeileA_RAMode_MP3Mode_SBMode()
             (zb,zc) = ZeilenBC_SBMode()
             zd = ZeileD_RAMode_MP3Mode_SBMode()
@@ -836,46 +818,46 @@ while True:
             anzeige(za,zb,zc,zd)
             time.sleep(1.0)
             anzaus()
-            modus=32                                          # SB Phase2 für "bereits im Standby" setzen
-        elif modus==32:                                       # Wenn im Standby Phase 2
-            time.sleep(1.0)                                   # Standby Energie sparen
-        elif modus==4:
+            modus=32                                          # SB Phase 2 für "bereits im Standby" setzen
+        elif modus == 32:                                       
+            time.sleep(1.0)                                   # Energie sparen, Schleifendurchlauf verzögern, CPU in Pause.
+        elif modus == 4:
             (za,zb,zc,zd) = ZeilenABCD_RBMode()
             anzeige(za,zb,zc,zd)
             time.sleep(3.0)
             os.system("sudo reboot")                          # Reboot
             time.sleep(3.0)
-        elif modus==5:
+        elif modus == 5:                                        
             (za,zb,zc,zd) = ZeilenABCD_SDMode()
             anzeige(za,zb,zc,zd)
             time.sleep(3.0)
             os.system("sudo halt")                            # Raspi runterfahren
             sys.exit()
-	elif modus==6:                                        # Favorit übernommen - Rückmeldung
+	elif modus == 6:                                        
             za = ZeileA_RAMode_MP3Mode_SBMode()
             (zb,zc) = ZeilenBC_FAVMode()
             zd = ZeileD_RAMode_MP3Mode_SBMode()
 	    anzeige(za,zb,zc,zd)
 	    time.sleep(3.0)
 	    modus = 1
-	elif modus==7:                                        # Wenn X,Y,Z Taste im MP3 Modus gewählt
+	elif modus == 7:                                        
 	    za = ZeileA_RAMode_MP3Mode_SBMode()
             (zb,zc) = ZeileBC_KeineFunktion()
 	    zd = ZeileD_RAMode_MP3Mode_SBMode()
 	    anzeige(za,zb,zc,zd)
 	    time.sleep(3.0)
 	    modus = 2
-	elif modus==8:                                        # Song gemerkt
+	elif modus == 8:                                        
 	    za = ZeileA_RAMode_MP3Mode_SBMode()
             (zb,zc)= ZeileBC_MERK()
 	    zd = ZeileD_RAMode_MP3Mode_SBMode()
 	    anzeige(za,zb,zc,zd)
 	    time.sleep(3.0)
 	    modus = 1
-        elif modus == 99:                                     # Wenn man im WLAN-Konfigurations-Modus zu wenige Buchstaben eingegeben hat, startet dieser erneut
+        elif modus == 99:                                       
             ZeilenABCD_WLAN_konf_Zeichen8()
             modus = 4
-        time.sleep(0.5)                                       # Display Aktualisierungszeit z.B. für Scrolltext, also nach welcher Zeit soll die Schleife wieder von oben anfangen.
+        time.sleep(0.7)                                       # Display Aktualisierungszeit z.B. für Scrolltext, also nach welcher Zeit soll die Schleife wieder von oben anfangen.
 
     except KeyboardInterrupt:                                 # Sonderbehandlung bei STRG+C
         GPIO.cleanup()                                        # Pinbelegung zurücksetzen
