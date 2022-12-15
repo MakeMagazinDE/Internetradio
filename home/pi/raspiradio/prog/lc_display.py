@@ -102,22 +102,22 @@ class lcd:
 
     x = 0
     for char in centered_string:
-      if ord(char) > 127:         # deutsche Umlaute erzeugen
-        if (ord(char) == 164) or (ord(char) == 132):  # ä oder Ä zu HD44780 ä
+      if ord(char) > 127:         # create german umlauts
+        if (ord(char) == 164) or (ord(char) == 132):  # ä or Ä to HD44780 ä
           self.write(225, Rs)
-        elif (ord(char) == 182) or (ord(char) == 150):   # ö oder Ö zu HD44780 ö
+        elif (ord(char) == 182) or (ord(char) == 150):   # ö or Ö to HD44780 ö
           self.write(239, Rs)
-        elif (ord(char) == 188) or (ord(char) == 156):   # ü oder Ü zu HD44780 ü 
+        elif (ord(char) == 188) or (ord(char) == 156):   # ü or Ü to HD44780 ü 
           self.write(245, Rs)
-        elif ord(char) == 159: # ß zu HD44780 ß
+        elif ord(char) == 159: # ß to HD44780 ß
           self.write(226, Rs)
-        elif ord(char) == 195: #  Anzahl 195er Zeichen zählen aber nicht ausgeben
+        elif ord(char) == 195: #  count 195 characters but don't show
          x = x+1
         else:
-          self.write(46, Rs) # Unbekannte Zeichen als "."
+          self.write(46, Rs) # unknown characters as "."
       else:
-        self.write(ord(char), Rs) # ASCII ohne Umwandlung ausgeben
-    while x > 0: # Leerstellen damit kein Schmutz übrig bleibt 
+        self.write(ord(char), Rs) # print ASCII without conversion
+    while x > 0: # print whitespace to clean previous output
       self.write(32, Rs)
       x = x-1
 
