@@ -20,29 +20,10 @@
 # EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 
 
-############################################
-#             make ´mein Radio´            #
-#         Web-Radio mit Raspberry Pi       #
-#            +----------------+            #
-#            |    #######  oo |            #
-#            | O  #######  oo |            #
-#            |                |            #
-#            |   --      --   |            #
-#            |  (  )    (  )  |            #
-#            |   --      --   |            #
-#            +----------------+            #
-#              \ /        \ /              #
-#           von Christoph Goebel           #
-############################################
-
-# Versionsinfo
-# Make 1/2019   
-
-
 #################
 # Konfiguration #
 #################
-version = "Make:1/2019"
+version = "2022.1"
 
 Bedienanleitung_anzeigen = True       # Bedienanleitung_anzeigen True/False
 wlan_ueber_radio_konfigurieren = True # W-LAN per Radioknöpfen konfigurieren True/False
