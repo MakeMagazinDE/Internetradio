@@ -168,30 +168,6 @@ def ZeileC_ip_anzeige():
         zc = "   ---.---.---.---  "                               # wenn keine IP vergeben, dann davon ausgehen, dass Verbindung nicht möglich
     return zc                                                     # Rückgabe der Ip für Zeile B
 
-
-#######################
-# W-LAN Konfiguration #
-#######################
-def wlan_konf():
-    global modus, sz, version
-    modus = 90                                                    # W-LAN einrichten - Abfrage
-    if wlan_ueber_radio_konfigurieren == True:
-        za = "W-LAN einrichten?   "
-        zb = "Dann jetzt          "
-        zc = "    >>> (C)Taste--->"
-        zd = "gedrückt halten.   "
-        anzeige(za,zb,zc,zd)
-        time.sleep(5)
-        if (GPIO.input(TasteModus) == GPIO.LOW):
-            modus = 91
-            za = "Mit den (A/B)Tasten "                           # W-LAN Konfigurator - Bedienhinweis
-            zb = "zum Zeichen.(C)Taste"
-            zc = "wählt das Zeichen. "
-            zd = "(D)Taste beendet.   "
-            anzeige(za,zb,zc,zd)
-            time.sleep(5)
-            ZeilenABCD_WLAN_konf_SSID_eingabe()
-
 # Buchstabenfolge in Zeile 2 anzeigen
 def Buchstabenanzeige(selektpos):
     global alleZeichen, aktuellesZeichen, sz
@@ -202,43 +178,6 @@ def Buchstabenanzeige(selektpos):
     buchstabenzeile = "<<< " + alleZeichen[selektpos-2] + " " + alleZeichen[selektpos-1] + " [" + alleZeichen[selektpos] + "] " + alleZeichen[selektpos+1] + " " + alleZeichen[selektpos+2] + " >>>"
     anzeige_einzeilig(buchstabenzeile, 2)
     aktuellesZeichen=alleZeichen[selektpos]
-
-# Schreiben in W-LAN System-Konfigurationsdatei
-def wpasupplicant(name, psw):
-    eintrag='\nnetwork={\n         ssid="' + name + '"\n' + '         psk="' + psw +'"\n}' + '\n'
-    file = open("/etc/wpa_supplicant/wpa_supplicant.conf","a")
-    file.write(eintrag)
-    file.close()
-    name = ""                                                      # Variable nach dem Schreiben leeren
-    psw  = ""                                                      # Variable nach dem Schreiben leeren
-
-# W-LAN Konfigurator - SSID eingeben
-def ZeilenABCD_WLAN_konf_SSID_eingabe():
-    za = "SSID eingeben:"
-    zb = " "
-    zc = " "
-    zd = " "
-    anzeige(za,zb,zc,zd)
-    Buchstabenanzeige(sz)
-
-# W-LAN Konfigurator - WPA Key eingeben
-def ZeilenABCD_WLAN_konf_Key_eingabe():
-    za = "WPA  Key eingeben:"
-    zb = " "
-    zc = " "
-    zd = "min. 8 Zeichen"
-    anzeige(za,zb,zc,zd)
-    Buchstabenanzeige(sz)
-
-# W-LAN Konfigurator - Key weniger als 8 Zeichen
-def ZeilenABCD_WLAN_konf_Zeichen8():
-    za = "Ein Key kleiner     "
-    zb = "8 Zeichen ist nicht "
-    zc = "zugelassen, die Ein-"
-    zd = "gabe ist ungültig! "
-    anzeige(za,zb,zc,zd)
-    time.sleep(3.0)
-
 
 ####################
 # Modus-Funktionen #
