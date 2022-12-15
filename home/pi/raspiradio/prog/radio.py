@@ -25,7 +25,7 @@
 #################
 version = "2022.1"
 
-Bedienanleitung_anzeigen = True       # Bedienanleitung_anzeigen True/False
+display_operating_instrcutions = True       # display_operating_instrcutions True/False
 wlan_ueber_radio_konfigurieren = True # W-LAN per Radioknöpfen konfigurieren True/False
 
 grosser_sendersprung = 5              # Doppelbedienung A+B Taste, springt 2 x grosser_sendersprung weiter
@@ -362,7 +362,7 @@ def anzeige_einzeilig(string, zeile):
 def ZeilenABCD_RUMode(v):
 
     # Bedienungsanleitung
-    if Bedienanleitung_anzeigen == True:
+    if display_operating_instrcutions:
         za = "Bedienungsanleitung "
         zb = "anzeigen? Dann nun  "
         zc = "    >>> (C)Taste--->"
