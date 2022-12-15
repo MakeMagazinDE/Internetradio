@@ -84,7 +84,7 @@ ssid = ""                                                      # Vorbelegung
 import RPi.GPIO as GPIO
 import time, os, sys
 from datetime import date
-from lcd_display import lcd
+from lc_display import lcd
 import subprocess
 
 
