@@ -11,17 +11,15 @@
 case "$1" in
 start)
         echo "radio started"
-        # Starte Programm
-        python /home/pi/raspiradio/prog/mein_radio.py
+        python /home/kradio/raspiradio/prog/radio.py
         ;;
     stop)
         echo "radio stopped"
-        # Beende Programm
         killall python
         killall mpd        
         ;;
     *)
-        echo "Used /etc/init.d/radio {start|stop}"
+        echo "Use /etc/init.d/radio {start|stop}"
         exit 1
         ;;
 esac 
