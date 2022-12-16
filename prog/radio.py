@@ -619,22 +619,22 @@ def favorit2( pin ):
             fav2 = sender                                                                 # Aktuellen Sender auf Taste speichern
             modus = 6                                                                     # Anzeige Favorit übernommen
         else:                                                                             # Favorit apspielen
-	        sender = fav2
-	        os.system(mpc["play"] + str(sender))
+            sender = fav2
+            os.system(mpc["play"] + str(sender))
     elif modus == 2 :
         modus = 7
 
 # Song merken
 def song_merken( pin ):                                                                   # Song merken
     global modus, sender
-    if modus == 1 :
-	    song, anzzeichen = ZeileC_RAMode_MP3Mode()
-	    file = open(current_dir + "/conf/merk.txt", "a+")                             # Datei öffnen, wenn nicht vorhanden dann anlegen.
+    if modus == 1:
+        song, anzzeichen = ZeileC_RAMode_MP3Mode()
+        file = open(current_dir + "/conf/merk.txt", "a+")                             # Datei öffnen, wenn nicht vorhanden dann anlegen.
         file.write(song + "\n")                                                           # Song und Umbruch schreiben
         file.close()
         modus = 8
     elif modus == 2 :
-	    modus = 7
+        modus = 7
 
 # Anzahl der gefundenen Sender aus Sender-Datei
 def anzahl_sender():
@@ -749,29 +749,29 @@ while True:
             time.sleep(3.0)
             os.system("sudo halt")                            # Raspi runterfahren
             sys.exit()
-	elif modus == 6:
-        za = ZeileA_RAMode_MP3Mode_SBMode()
-        (zb,zc) = ZeilenBC_FAVMode()
-        zd = ZeileD_RAMode_MP3Mode_SBMode()
-	    anzeige(za,zb,zc,zd)
-	    time.sleep(3.0)
-	    modus = 1
-	elif modus == 7:
-	    za = ZeileA_RAMode_MP3Mode_SBMode()
-        (zb,zc) = ZeileBC_KeineFunktion()
-	    zd = ZeileD_RAMode_MP3Mode_SBMode()
-	    anzeige(za,zb,zc,zd)
-	    time.sleep(3.0)
-	    modus = 2
-	elif modus == 8:
-	    za = ZeileA_RAMode_MP3Mode_SBMode()
-        (zb,zc)= ZeileBC_MERK()
-	    zd = ZeileD_RAMode_MP3Mode_SBMode()
-	    anzeige(za,zb,zc,zd)
-	    time.sleep(3.0)
-	    modus = 1
+        elif modus == 6:
+            za = ZeileA_RAMode_MP3Mode_SBMode()
+            (zb,zc) = ZeilenBC_FAVMode()
+            zd = ZeileD_RAMode_MP3Mode_SBMode()
+            anzeige(za,zb,zc,zd)
+            time.sleep(3.0)
+            modus = 1
+        elif modus == 7:
+            za = ZeileA_RAMode_MP3Mode_SBMode()
+            (zb,zc) = ZeileBC_KeineFunktion()
+            zd = ZeileD_RAMode_MP3Mode_SBMode()
+            anzeige(za,zb,zc,zd)
+            time.sleep(3.0)
+            modus = 2
+        elif modus == 8:
+            za = ZeileA_RAMode_MP3Mode_SBMode()
+            (zb,zc)= ZeileBC_MERK()
+            zd = ZeileD_RAMode_MP3Mode_SBMode()
+            anzeige(za,zb,zc,zd)
+            time.sleep(3.0)
+            modus = 1
         elif modus == 99:
-        ZeilenABCD_WLAN_konf_Zeichen8()
+            ZeilenABCD_WLAN_konf_Zeichen8()
             modus = 4
         time.sleep(0.7)                                       # Display Aktualisierungszeit z.B. für Scrolltext, also nach welcher Zeit soll die Schleife wieder von oben anfangen.
 
