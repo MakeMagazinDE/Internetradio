@@ -545,6 +545,7 @@ def ZeileBC_MERK():
 ############################
 # Senderwechsel/Songwechsel hoch SWH bzw. in W-LAN Konfigurationsmodus  - Buchstabe vor
 def SWH( pin ):
+    print("Taste hoch")
     global sender, AnzSender, modus, sz, grosser_sendersprung
     if modus == 91 or modus == 92:
         sz = sz + 1
@@ -564,6 +565,7 @@ def SWH( pin ):
 
 # Senderwechsel/Songwechsel runter SWR bzw. in W-LAN Konfigurationsmodus  - Buchstabe zurück
 def SWR( pin ):
+    print("Taste runter")
     global sender, AnzSender, modus, sz, grosser_sendersprung
     if modus == 91 or modus == 92:
         sz = sz - 1
