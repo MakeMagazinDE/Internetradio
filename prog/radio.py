@@ -144,7 +144,7 @@ def anzaus():
 # IP Adresse ermitteln
 def ZeileC_ip_anzeige():
     ipadrBASH = "hostname -I | cut -f1 -d' '"                     # IP ermitteln
-    ipadranz = subprocess.check_output([ipadrBASH], shell=True)   # IP in Variable
+    ipadranz = subprocess.check_output([ipadrBASH], shell=True, text=True)   # IP in Variable
     ipadranz = ipadranz.strip("\n")                               # Umbruch durch Leerzeichen ersetzen
     ipStellen = len(ipadranz)                                     # Länge der IP ermitteln
     if ipStellen > 1:                                             # Wenn IP vergeben
@@ -371,7 +371,7 @@ def ZeilenABCD_RUMode(v):
     anzahl_sender()
     # SD Karte freier Speicher in Prozent
     verw_speicherBASH = "df -h | grep /dev/root | cut -b 38-39"                     # Befehl zum Auslesen des belegten Speichers in Prozent
-    verw_speicher = subprocess.check_output([verw_speicherBASH], shell=True)        # Auslesen der prozentualen Belegung
+    verw_speicher = subprocess.check_output([verw_speicherBASH], shell=True, text=True)        # Auslesen der prozentualen Belegung
     verw_speicher = verw_speicher.strip("\n")                                       # Umbruch durch Leerzeichen ersetzen
     frei_speicher = 100 - int(verw_speicher)
 
@@ -412,7 +412,7 @@ def ZeileA_RAMode_MP3Mode_SBMode():                                             
     # W-LAN Signal ermitteln
     slBASH = "iwconfig wlan0 | grep Signal | awk '{print $4}' | cut -c7-8"           # Bash-Befehl zur Ermittlung des SignalLevels
     try:
-        sl = int(subprocess.check_output([slBASH], shell=True))                      # Signallevel als Integer ermitteln, wenn W-LAN weg, dann kurzzeitig keine Wandlung möglich da ValueError -> dann except.
+        sl = int(subprocess.check_output([slBASH], shell=True, text=True))                      # Signallevel als Integer ermitteln, wenn W-LAN weg, dann kurzzeitig keine Wandlung möglich da ValueError -> dann except.
         if (sl <=25) and (sl >0):                                                    # Signalstärke sehr schlecht
             qual = "*   "
         elif (sl  >25) and (sl <51):                                                 # Signalstärke schlecht
@@ -434,7 +434,7 @@ def ZeileA_RAMode_MP3Mode_SBMode():                                             
 def ZeileB_RAMode():                                                                 # Funktionsdefinition zum Ermitteln des Strings für Zeile B im RadioModus
     global sender
     stBASH = "mpc -h " + str(PH) + " -f %name% | grep playing | cut -c12-13"         # Bash-mpc Befehl mit grep&cut zum SenderstationsNr.-Auslesen
-    st_tmp = subprocess.check_output([stBASH], shell=True)                           # Sendernummer auslesen
+    st_tmp = subprocess.check_output([stBASH], shell=True, text=True)                           # Sendernummer auslesen
     st_tmp = st_tmp.strip("\n/")                                                     # Umbruch entfernen, Slash entfernen (bei einstelligen Sendern)
     if st_tmp == "":                                                                 # Wenn der Sender mal länger zum Starten benötigt oder keine W-LAN Verbindung besteht.
         zb = "  Warte auf Sender  "                                                  # Dann Sendersuche anzeigen
@@ -451,7 +451,7 @@ def ZeileB_RAMode():                                                            
             st_anwahl = st_int -1                                                    # Senderstationsnummer -1 um in der Liste den richtigen Sendernamen zu wählen
             # Sendernamen aus playlist-Kommentaren auslesen
             snBASH = "awk '/http/ {print $3}' " + str(radio_playlist)                # Befehl zur Ermittlung der Sendernamen
-            sn = subprocess.check_output([snBASH], shell=True)                       # Auslesen der Sendernamen
+            sn = subprocess.check_output([snBASH], shell=True, text=True)                       # Auslesen der Sendernamen
             sn = sn.split()                                                          # Sendernamen umwandeln als Liste
             snl = len(sn[st_anwahl])                                                 # Sendernamenlänge des durch die Stationsnummer ermittelten Namens
             if (snl > 15):                                                           # Sendernamen-String kürzen wenn länger als 15 Zeichen
@@ -467,7 +467,7 @@ def ZeileB_RAMode():                                                            
 
 # ZeileC_RAMode_MP3Mode
 def ZeileC_RAMode_MP3Mode():                                                         # Funktionsdefinition zum Ermitteln des Strings für Zeile C im RadioModus & MP3 Modus
-    info_tmp = subprocess.check_output([mpc["songinfo"]], shell=True)
+    info_tmp = subprocess.check_output([mpc["songinfo"]], shell=True, text=True)
     if not "#" in info_tmp:
         info_tmp = info_tmp.strip("\n")                                              # Umbruch raus
         info_tmp = info_tmp.strip()                                                  # Schmierzeichen entfernen
@@ -628,7 +628,7 @@ def song_merken( pin ):                                                         
 def anzahl_sender():
     global AnzSender
     AnzSenderBASH = "ls | awk '/http/ {print $3}' " + str(radio_playlist) + " | wc -l"     # Befehl-Anzahl der RadioSender aus mpd radio playlist
-    AnzSender = subprocess.check_output([AnzSenderBASH], shell=True)                       # Anzahl Sender ermitteln mit AWK Befehl
+    AnzSender = subprocess.check_output([AnzSenderBASH], shell=True, text=True)            # Anzahl Sender ermitteln mit AWK Befehl
     AnzSender = AnzSender.strip("\n")                                                      # Umbruch raus
     AnzSender = int(AnzSender)                                                             # Umwandeln in int
 
