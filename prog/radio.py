@@ -17,9 +17,15 @@
 # OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
 # DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
 # STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
-# EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+# EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import RPi.GPIO as GPIO
+import time, os, sys
+from datetime import date
+from lc_display import lcd
+import subprocess
 
+current_dir = os.path.realpath(__file__)
 #################
 # Konfiguration #
 #################
@@ -33,13 +39,13 @@ grosser_sendersprung = 5              # Doppelbedienung A+B Taste, springt 2 x g
 ###########################
 # mpd m3u Senderablageort #
 ###########################
-radio_playlist = "/home/pi/raspiradio/conf/radio_sender.m3u"
+radio_playlist = current_dir + "/conf/radio_sender.m3u"
 
 
 ##############################################################################
 # mpc client - Passwort und Hostname fuer Bedienung via Tastenfeld und Handy #
 ##############################################################################
-PH = "Raspi_radio123@RaspiRadio"                                                  # Beispiel:  blabla@MeinRadio
+PH = "kradio@RaspiRadio"                                                  # Beispiel:  blabla@MeinRadio
 
 
 #######################################################################################################
@@ -54,7 +60,7 @@ mpc = {
 "next"     : "mpc -h " + str(PH) + " next",                                       # Nächter Sender/Song
 "prev"     : "mpc -h " + str(PH) + " prev",                                       # Vorheriger Sender/Song
 "shuffle"  : "mpc -h " + str(PH) + " shuffle",                                    # Playlist zufällig zusammenstellen
-"addmusic" : "cd /home/pi/raspiradio/music && mpc -h " + str(PH) + " add *.*",    # Alle MP3 Songs aus diesem Verzeichnis einlesen
+"addmusic" : "cd " + current_dir + "/music && mpc -h " + str(PH) + " add *.*",    # Alle MP3 Songs aus diesem Verzeichnis einlesen
 "songinfo" : "mpc -h " + str(PH) + " current"                                     # Aktuelle Songinfo/Radioinfo
 }
 
@@ -76,16 +82,6 @@ sz = 10                                                        # selektiertes Ze
 aktuellesZeichen = ""                                          # Vorbelegung
 bez = ""                                                       # Vorbelegung für bisher eingewaehlte Zeichen
 ssid = ""                                                      # Vorbelegung
-
-
-##############################
-# Import benötigter Libaries #
-##############################
-import RPi.GPIO as GPIO
-import time, os, sys
-from datetime import date
-from lc_display import lcd
-import subprocess
 
 
 ###############################
@@ -173,7 +169,7 @@ def Buchstabenanzeige(selektpos):
     global alleZeichen, aktuellesZeichen, sz
     if selektpos == len(alleZeichen)-3:
         sz = -3
-    elif selektpos == (len(alleZeichen) -3) * (-1): 
+    elif selektpos == (len(alleZeichen) -3) * (-1):
         sz = 3
     buchstabenzeile = "<<< " + alleZeichen[selektpos-2] + " " + alleZeichen[selektpos-1] + " [" + alleZeichen[selektpos] + "] " + alleZeichen[selektpos+1] + " " + alleZeichen[selektpos+2] + " >>>"
     anzeige_einzeilig(buchstabenzeile, 2)
@@ -205,10 +201,10 @@ def RUMode():
     VerstaerkerEin()                                                 # Verstärker ein
     os.system(mpc["clear"])                                          # mpc clear
     os.system(mpc["update"])                                         # mpc update
-    os.system('mpg321 /home/pi/raspiradio/conf/StartUp.mp3')         # Start-Sound abspielen
+    os.system('mpg321 ' + current_dir + '/conf/StartUp.mp3')         # Start-Sound abspielen
 
 # Radio-Modus
-def RAMode(): 
+def RAMode():
     global modus, sender
     if (modus == 0) or (modus == 31) or (modus == 32):
         modus = 1
@@ -270,7 +266,7 @@ def RBMode():                                                         # Modus RB
     global modus
     modus = 4
     os.system(mpc["stop"])                                            # Player stop
-    os.system('mpg321 /home/pi/raspiradio/conf/ShutDown.mp3')         # Shutdown Sound abspielen
+    os.system('mpg321 ' + current_dir + '/conf/ShutDown.mp3')         # Shutdown Sound abspielen
     VerstaerkerAus()                                                  # Verstärker Aus
 
 # ShutDown Modus
@@ -278,7 +274,7 @@ def SDMode():
     global modus
     modus = 5
     os.system(mpc["stop"])                                            # mpc-Abspielen stoppen
-    os.system('mpg321 /home/pi/raspiradio/conf/ShutDown.mp3')         # ShutDown Sound abspielen
+    os.system('mpg321 ' + current_dir + '/conf/ShutDown.mp3')         # ShutDown Sound abspielen
     VerstaerkerAus()                                                  # Verstärker Aus
 
 
@@ -308,7 +304,7 @@ def ZeilenABCD_RUMode(v):
         zd = "gedrückt halten.   "
         anzeige(za,zb,zc,zd)
         time.sleep(5)
-        if (GPIO.input(TasteModus) == GPIO.LOW): 
+        if (GPIO.input(TasteModus) == GPIO.LOW):
             za = "--------------------"
             zb = "Bedienungsanleitung "
             zc = "  wird gestartet.   "
@@ -382,7 +378,7 @@ def ZeilenABCD_RUMode(v):
             za = "Schreibt akt. Radio-"
             zb = "song in Merkliste.  "
             zc = "   >>> (Z)Taste---< "
-            zd = "smb: conf/merk.txt  " 
+            zd = "smb: conf/merk.txt  "
             anzeige(za,zb,zc,zd)
             time.sleep(4)
 
@@ -632,14 +628,14 @@ def favorit2( pin ):
 def song_merken( pin ):                                                                   # Song merken
     global modus, sender
     if modus == 1 :
-	song, anzzeichen = ZeileC_RAMode_MP3Mode()
-	file = open("/home/pi/raspiradio/conf/merk.txt","a+")                             # Datei öffnen, wenn nicht vorhanden dann anlegen.
+	    song, anzzeichen = ZeileC_RAMode_MP3Mode()
+	    file = open(current_dir + "/conf/merk.txt", "a+")                             # Datei öffnen, wenn nicht vorhanden dann anlegen.
         file.write(song + "\n")                                                           # Song und Umbruch schreiben
         file.close()
         modus = 8
     elif modus == 2 :
 	    modus = 7
-	    
+
 # Anzahl der gefundenen Sender aus Sender-Datei
 def anzahl_sender():
     global AnzSender
@@ -661,7 +657,7 @@ sender = 1                     # Aktuelle Sendernummer als GLOBAL Variable da In
 my_lcd = lcd()                 # LCD initialisieren
 wlan_konf()                    # ggf. W-LAN konfigurieren
 if modus == 90:
-    RUMode()                   # RunUp sobald 
+    RUMode()                   # RunUp sobald
     ZeilenABCD_RUMode(version) # RunUp Anzeige mit Übergabe der Versionsnummer
     RAMode()                   # Radio nach RunUp ohne Interrupt starten
 
@@ -693,13 +689,13 @@ GPIO.add_event_detect(TasteMerker, GPIO.FALLING, callback=song_merken, bouncetim
 while True:
     try:
 
-        if modus == 1:                                        
+        if modus == 1:
             za = ZeileA_RAMode_MP3Mode_SBMode()
             zb = ZeileB_RAMode()
             zc_tmp, zc_tmp_len = ZeileC_RAMode_MP3Mode()      # Gibt die Sender-Song Info zurück n Zeichen
             if zc_tmp_len > 20:                               # Wenn Songinfo 20 Zeichen (Displayzeile) überschreitet, dann Überhang ermitteln
                 ueberhang = zc_tmp_len -20                    # Ermittle Überhang von Zeichen also die Über die Displayreihe hinaus gehen
-                if a <= ueberhang:                            # Solange machen bis alle Überhangzeichen abgearbeitet sind, 
+                if a <= ueberhang:                            # Solange machen bis alle Überhangzeichen abgearbeitet sind,
                     zc = zc_tmp[a:z]                          # Ausgeben und verschieben der Ausgabe des Strings immer um ein Zeichen nach rechts,
                     a = a+1                                   # Wenn a +1 den Überhang erreicht hat, ist der Text einmal komplett durchgelaufen.
                     z = z+1                                   # Z also Ende der Ausgabe muss mit rücken
@@ -710,7 +706,7 @@ while True:
                 zc = zc_tmp                                   # Wenn Text nicht laenger als Displayzeichen dann normal ausgeben
             zd = ZeileD_RAMode_MP3Mode_SBMode()
             anzeige(za,zb,zc,zd)
-        elif modus == 2:                                      
+        elif modus == 2:
             za = ZeileA_RAMode_MP3Mode_SBMode()
             zb = ZeileB_MP3Mode()
             zc_tmp, zc_tmp_len = ZeileC_RAMode_MP3Mode()      # Gibt die Sender-Song Info zurück n Zeichen
@@ -727,7 +723,7 @@ while True:
                 zc = zc_tmp
             zd = ZeileD_RAMode_MP3Mode_SBMode()
             anzeige(za,zb,zc,zd)
-        elif modus == 31:                                       
+        elif modus == 31:
             za = ZeileA_RAMode_MP3Mode_SBMode()
             (zb,zc) = ZeilenBC_SBMode()
             zd = ZeileD_RAMode_MP3Mode_SBMode()
@@ -739,7 +735,7 @@ while True:
             time.sleep(1.0)
             anzaus()
             modus=32                                          # SB Phase 2 für "bereits im Standby" setzen
-        elif modus == 32:                                       
+        elif modus == 32:
             time.sleep(1.0)                                   # Energie sparen, Schleifendurchlauf verzögern, CPU in Pause.
         elif modus == 4:
             (za,zb,zc,zd) = ZeilenABCD_RBMode()
@@ -747,35 +743,35 @@ while True:
             time.sleep(3.0)
             os.system("sudo reboot")                          # Reboot
             time.sleep(3.0)
-        elif modus == 5:                                        
+        elif modus == 5:
             (za,zb,zc,zd) = ZeilenABCD_SDMode()
             anzeige(za,zb,zc,zd)
             time.sleep(3.0)
             os.system("sudo halt")                            # Raspi runterfahren
             sys.exit()
-	elif modus == 6:                                        
-            za = ZeileA_RAMode_MP3Mode_SBMode()
-            (zb,zc) = ZeilenBC_FAVMode()
-            zd = ZeileD_RAMode_MP3Mode_SBMode()
+	elif modus == 6:
+        za = ZeileA_RAMode_MP3Mode_SBMode()
+        (zb,zc) = ZeilenBC_FAVMode()
+        zd = ZeileD_RAMode_MP3Mode_SBMode()
 	    anzeige(za,zb,zc,zd)
 	    time.sleep(3.0)
 	    modus = 1
-	elif modus == 7:                                        
+	elif modus == 7:
 	    za = ZeileA_RAMode_MP3Mode_SBMode()
-            (zb,zc) = ZeileBC_KeineFunktion()
+        (zb,zc) = ZeileBC_KeineFunktion()
 	    zd = ZeileD_RAMode_MP3Mode_SBMode()
 	    anzeige(za,zb,zc,zd)
 	    time.sleep(3.0)
 	    modus = 2
-	elif modus == 8:                                        
+	elif modus == 8:
 	    za = ZeileA_RAMode_MP3Mode_SBMode()
-            (zb,zc)= ZeileBC_MERK()
+        (zb,zc)= ZeileBC_MERK()
 	    zd = ZeileD_RAMode_MP3Mode_SBMode()
 	    anzeige(za,zb,zc,zd)
 	    time.sleep(3.0)
 	    modus = 1
-        elif modus == 99:                                       
-            ZeilenABCD_WLAN_konf_Zeichen8()
+        elif modus == 99:
+        ZeilenABCD_WLAN_konf_Zeichen8()
             modus = 4
         time.sleep(0.7)                                       # Display Aktualisierungszeit z.B. für Scrolltext, also nach welcher Zeit soll die Schleife wieder von oben anfangen.
 
