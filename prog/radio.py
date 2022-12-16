@@ -27,6 +27,7 @@ from lc_display import lcd
 import subprocess
 
 current_dir = os.path.realpath(__file__)
+parent_dir = os.path.realpath(current_dir + "/../..")
 #################
 # Konfiguration #
 #################
@@ -40,7 +41,7 @@ grosser_sendersprung = 5              # Doppelbedienung A+B Taste, springt 2 x g
 ###########################
 # mpd m3u Senderablageort #
 ###########################
-radio_playlist = current_dir + "/conf/radio_sender.m3u"
+radio_playlist = parent_dir + "/conf/radio_sender.m3u"
 
 
 ##############################################################################
@@ -61,7 +62,7 @@ mpc = {
 "next"     : "mpc -h " + str(PH) + " next",                                       # Nächter Sender/Song
 "prev"     : "mpc -h " + str(PH) + " prev",                                       # Vorheriger Sender/Song
 "shuffle"  : "mpc -h " + str(PH) + " shuffle",                                    # Playlist zufällig zusammenstellen
-"addmusic" : "cd " + current_dir + "/music && mpc -h " + str(PH) + " add *.*",    # Alle MP3 Songs aus diesem Verzeichnis einlesen
+"addmusic" : "cd " + parent_dir + "/music && mpc -h " + str(PH) + " add *.*",    # Alle MP3 Songs aus diesem Verzeichnis einlesen
 "songinfo" : "mpc -h " + str(PH) + " current"                                     # Aktuelle Songinfo/Radioinfo
 }
 
@@ -189,7 +190,7 @@ def RUMode():
     modus = 0
     os.system(mpc["clear"])                                          # mpc clear
     os.system(mpc["update"])                                         # mpc update
-    os.system('mpg321 ' + current_dir + '/conf/StartUp.mp3')         # Start-Sound abspielen
+    os.system('mpg321 ' + parent_dir + '/conf/StartUp.mp3')         # Start-Sound abspielen
 
 # Radio-Modus
 def RAMode():
@@ -252,14 +253,14 @@ def RBMode():                                                         # Modus RB
     global modus
     modus = 4
     os.system(mpc["stop"])                                            # Player stop
-    os.system('mpg321 ' + current_dir + '/conf/ShutDown.mp3')         # Shutdown Sound abspielen
+    os.system('mpg321 ' + parent_dir + '/conf/ShutDown.mp3')         # Shutdown Sound abspielen
 
 # ShutDown Modus
 def SDMode():
     global modus
     modus = 5
     os.system(mpc["stop"])                                            # mpc-Abspielen stoppen
-    os.system('mpg321 ' + current_dir + '/conf/ShutDown.mp3')         # ShutDown Sound abspielen
+    os.system('mpg321 ' + parent_dir + '/conf/ShutDown.mp3')         # ShutDown Sound abspielen
 
 
 ######################
@@ -615,7 +616,7 @@ def song_merken( pin ):                                                         
     global modus, sender
     if modus == 1:
         song, anzzeichen = ZeileC_RAMode_MP3Mode()
-        file = open(current_dir + "/conf/merk.txt", "a+")                             # Datei öffnen, wenn nicht vorhanden dann anlegen.
+        file = open(parent_dir + "/conf/merk.txt", "a+")                             # Datei öffnen, wenn nicht vorhanden dann anlegen.
         file.write(song + "\n")                                                           # Song und Umbruch schreiben
         file.close()
         modus = 8
