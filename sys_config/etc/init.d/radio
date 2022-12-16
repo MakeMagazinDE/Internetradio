@@ -11,12 +11,12 @@
 case "$1" in
 start)
         echo -n "Starting radio..."
-        start-stop-daemon --start --chuid kradio --group kradio --make-pidfile --pidfile /var/run/kradio.pid --exec /home/kradio/raspiradio/prog/radio.py
+        start-stop-daemon --start --quiet --chuid kradio --group kradio --make-pidfile --pidfile /var/run/kradio.pid --exec /home/kradio/raspiradio/prog/radio.py
         echo "radio started"
         ;;
     stop)
         echo -n "Stopping radio..."
-        start-stop-daemon --stop --pidfile /var/run/kradio.pid
+        start-stop-daemon --stop --quiet --pidfile /var/run/kradio.pid
         killall mpd
         echo "stopped"
         ;;
