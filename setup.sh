@@ -9,6 +9,9 @@ fi
 # install necessary software
 sudo apt install -y mpd mpc mpg321 alsa-utils python3-pip i2c-tools
 
+# create necessary firs
+mkdir -p /home/pi/raspiradio/music
+
 # copy config files
 if ! diff -w sys_config/etc/asound.conf /etc/asound.conf > /dev/null
 then
