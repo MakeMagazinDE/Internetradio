@@ -138,8 +138,9 @@ def wlanaus():
 
 # Anzeige aus
 def anzaus():
-    global my_lcd
-    my_lcd.backlight_off()
+    # global my_lcd
+    # my_lcd.backlight_off()
+    pass
 
 # IP Adresse ermitteln
 def ZeileC_ip_anzeige():
@@ -267,15 +268,17 @@ def SDMode():
 ######################
 # Allgemeine Anzeige-Funktion für alles 4 Zeilen
 def anzeige(ZeileA,ZeileB,ZeileC,ZeileD):                             # Funktionsdefinitionsdefinition für Anzeigeausgabe
-    global my_lcd                                                     # Beispiel:
-    my_lcd.display_string(ZeileA, 1)                                  #           ---<12:13>-<*** >---     ZeileA  zeit & W-LAN Empfangsqualität qual
-    my_lcd.display_string(ZeileB, 2)                                  #           (06) NDR2-Nieders.       ZeileB  StationsNummer st und SenderName sn max. 15 Zeichen
-    my_lcd.display_string(ZeileC, 3)                                  #           Die Fantastischen Vi     ZeileC  Sender- Song Info als Lauftext
-    my_lcd.display_string(ZeileD, 4)                                  #           -<21.02.2019> <Di.>-     ZeileD  datum und Wochentag wt
+    # global my_lcd                                                     # Beispiel:
+    # my_lcd.display_string(ZeileA, 1)                                  #           ---<12:13>-<*** >---     ZeileA  zeit & W-LAN Empfangsqualität qual
+    # my_lcd.display_string(ZeileB, 2)                                  #           (06) NDR2-Nieders.       ZeileB  StationsNummer st und SenderName sn max. 15 Zeichen
+    # my_lcd.display_string(ZeileC, 3)                                  #           Die Fantastischen Vi     ZeileC  Sender- Song Info als Lauftext
+    # my_lcd.display_string(ZeileD, 4)                                  #           -<21.02.2019> <Di.>-     ZeileD  datum und Wochentag wt
+    pass
 
 # Allgemeine Anzeige-Funktion für einzeilige Änderungen
 def anzeige_einzeilig(string, zeile):
-    my_lcd.display_string(string, zeile)
+    # my_lcd.display_string(string, zeile)
+    pass
 
 # Zeilen ABCD RUMode
 def ZeilenABCD_RUMode(v):
@@ -640,7 +643,7 @@ fav1 = 1                       # Vorbelegung Favoritsender1 beim Boot
 fav2 = 2                       # Vorbelegung Favoritsender2 beim Boot
 AnzSender = 0                  # Senderanzahl als GLOBAL Variable da Interrupt-Aufrufe keine Rückgabe liefern, 0 als Vorbelegung
 sender = 1                     # Aktuelle Sendernummer als GLOBAL Variable da Interrupt-Aufrufe keine Rückgabe liefern, 1 als erster Sender nach Start
-my_lcd = lcd()                 # LCD initialisieren
+# my_lcd = lcd()                 # LCD initialisieren
 RUMode()                   # RunUp sobald
 ZeilenABCD_RUMode(version) # RunUp Anzeige mit Übergabe der Versionsnummer
 RAMode()                   # Radio nach RunUp ohne Interrupt starten
