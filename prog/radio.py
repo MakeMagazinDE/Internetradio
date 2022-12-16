@@ -98,7 +98,6 @@ TasteHoch=7
 TasteRunter=16
 TasteModus=13
 TasteStandby=15
-Relaisausgang=18
 klatschsensor=36
 TasteFavoritsender1= 29
 TasteFavoritsender2= 31
@@ -119,12 +118,6 @@ GPIO.setup(TasteMerker, GPIO.IN)                                 # Song merken i
 
 
 ###################
-# Pins als Output #
-###################
-GPIO.setup(Relaisausgang, GPIO.OUT)                              # Relaisausgang für Lautsprecher 12V Ein/Aus Standby
-
-
-###################
 # Modus Variable  #
 ###################
 global modus                                                     # Hier global, da u.a. in Hauptschleife geändert wird und über einige Funktionen abgefragt wird.
@@ -133,12 +126,6 @@ global modus                                                     # Hier global, 
 ###################################################
 # Hardware Funktionen inkl. & IP Adressermittlung #
 ###################################################
-# Verstaerker Ein/Aus
-def VerstaerkerEin():
-    GPIO.output(Relaisausgang, GPIO.LOW)                         # Relais auf Low und damit Verstärker einschalten
-def VerstaerkerAus():
-    GPIO.output(Relaisausgang, GPIO.HIGH)                        # Relais auf High und damit Verstärker ausschalten
-
 # W-LAN Adapter Ein
 def wlanein():
     os.system("sudo ip link set wlan0 up")
@@ -200,7 +187,6 @@ def RAModeOrMP3Mode( pin ):
 def RUMode():
     global modus
     modus = 0
-    VerstaerkerEin()                                                 # Verstärker ein
     os.system(mpc["clear"])                                          # mpc clear
     os.system(mpc["update"])                                         # mpc update
     os.system('mpg321 ' + current_dir + '/conf/StartUp.mp3')         # Start-Sound abspielen
@@ -212,7 +198,6 @@ def RAMode():
         modus = 1
         wlanein()                                                    # W-LAN Adapter ein
     modus = 1                                                        # Modus RAMode
-    VerstaerkerEin()                                                 # Verstärker ein
     os.system(mpc["clear"])                                          # mpc clear
     os.system(mpc["loadlist"])                                       # mpc load list
     os.system(mpc["play"] + str(sender))                             # mpc play letzten Sender
@@ -261,7 +246,6 @@ def SBMode( pin ):
             modus = 31                                                # SBMode 3 1     In den Standby
             os.system(mpc["stop"])                                    # mpc Abspielen stoppen
             wlanaus()                                                 # W-LAN Adapter aus
-            VerstaerkerAus()                                          # Verstärker aus
 
 # Reboot Modus
 def RBMode():                                                         # Modus RBMode
@@ -269,7 +253,6 @@ def RBMode():                                                         # Modus RB
     modus = 4
     os.system(mpc["stop"])                                            # Player stop
     os.system('mpg321 ' + current_dir + '/conf/ShutDown.mp3')         # Shutdown Sound abspielen
-    VerstaerkerAus()                                                  # Verstärker Aus
 
 # ShutDown Modus
 def SDMode():
@@ -277,7 +260,6 @@ def SDMode():
     modus = 5
     os.system(mpc["stop"])                                            # mpc-Abspielen stoppen
     os.system('mpg321 ' + current_dir + '/conf/ShutDown.mp3')         # ShutDown Sound abspielen
-    VerstaerkerAus()                                                  # Verstärker Aus
 
 
 ######################
