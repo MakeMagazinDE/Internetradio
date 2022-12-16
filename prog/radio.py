@@ -46,7 +46,7 @@ radio_playlist = current_dir + "/conf/radio_sender.m3u"
 ##############################################################################
 # mpc client - Passwort und Hostname fuer Bedienung via Tastenfeld und Handy #
 ##############################################################################
-PH = "kradio@RaspiRadio"                                                  # Beispiel:  blabla@MeinRadio
+PH = "kradio@kradio"                                                  # Beispiel:  blabla@MeinRadio
 
 
 #######################################################################################################
