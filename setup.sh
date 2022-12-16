@@ -4,7 +4,7 @@
 sudo cp --backup=numbered sys_config/boot/config.txt /boot/config.txt
 
 # install necessary software
-sudo apt install -y mpd mpc alsa-utils
+sudo apt install -y mpd mpc alsa-utils python3-pip
 
 # copy config files
 sudo cp --backup=numbered sys_config/etc/asound.conf /etc/asound.conf
@@ -14,3 +14,6 @@ sudo cp --backup=numbered sys_config/etc/mpd.conf /etc/mpd.conf
 sudo cp --backup=numbered sys_config/etc/init.d/radio /etc/init.d/radio
 sudo chmod 755 /etc/init.d/radio
 sudo update-rc.d radio defaults
+
+# Python dependencies
+pip install -r requirements.txt
