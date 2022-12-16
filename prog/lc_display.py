@@ -1,4 +1,5 @@
-#!/usr/bin/python coding=iso-8859-15
+#!/usr/bin/python
+# -*- coding: iso-8859-15 -*-
 
 import i2c_lib
 from time import sleep
@@ -53,7 +54,7 @@ Rw = 0b00000010 # Read/Write bit
 Rs = 0b00000001 # Register select bit
 
 class lcd:
-  """ 
+  """
   Class to control the 16x2 I2C LCD display from sainsmart from the Raspberry Pi
   """
 
@@ -107,7 +108,7 @@ class lcd:
           self.write(225, Rs)
         elif (ord(char) == 182) or (ord(char) == 150):   # ö or Ö to HD44780 ö
           self.write(239, Rs)
-        elif (ord(char) == 188) or (ord(char) == 156):   # ü or Ü to HD44780 ü 
+        elif (ord(char) == 188) or (ord(char) == 156):   # ü or Ü to HD44780 ü
           self.write(245, Rs)
         elif ord(char) == 159: # ß to HD44780 ß
           self.write(226, Rs)
