@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 # apply boot config
 sudo cp --backup=numbered sys_config/boot/config.txt /boot/config.txt
