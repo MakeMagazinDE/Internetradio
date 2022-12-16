@@ -16,4 +16,4 @@ sudo chmod 755 /etc/init.d/radio
 sudo update-rc.d radio defaults
 
 # Python dependencies
-pip install -r requirements.txt
+#pip install -r requirements.txt
