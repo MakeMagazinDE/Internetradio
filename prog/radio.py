@@ -641,10 +641,9 @@ fav2 = 2                       # Vorbelegung Favoritsender2 beim Boot
 AnzSender = 0                  # Senderanzahl als GLOBAL Variable da Interrupt-Aufrufe keine Rückgabe liefern, 0 als Vorbelegung
 sender = 1                     # Aktuelle Sendernummer als GLOBAL Variable da Interrupt-Aufrufe keine Rückgabe liefern, 1 als erster Sender nach Start
 #my_lcd = lcd()                 # LCD initialisieren
-if modus == 90:
-    RUMode()                   # RunUp sobald
-    ZeilenABCD_RUMode(version) # RunUp Anzeige mit Übergabe der Versionsnummer
-    RAMode()                   # Radio nach RunUp ohne Interrupt starten
+RUMode()                   # RunUp sobald
+ZeilenABCD_RUMode(version) # RunUp Anzeige mit Übergabe der Versionsnummer
+RAMode()                   # Radio nach RunUp ohne Interrupt starten
 
 
 ######################################
