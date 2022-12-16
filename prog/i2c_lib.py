@@ -1,10 +1,10 @@
-import smbus
+import smbus2
 from time import *
 
 class i2c_device:
   def __init__(self, addr, port=0):
     self.addr = addr
-    self.bus = smbus.SMBus(port)
+    self.bus = smbus2.SMBus(port)
 
   # Write a single command
   def write_cmd(self, cmd):
