@@ -33,8 +33,7 @@ parent_dir = os.path.realpath(current_dir + "/../..")
 #################
 version = "2022.1"
 
-display_operating_instrcutions = True       # display_operating_instrcutions True/False
-wlan_ueber_radio_konfigurieren = True # W-LAN per Radioknöpfen konfigurieren True/False
+display_operating_instrcutions = False       # display_operating_instrcutions True/False
 
 grosser_sendersprung = 5              # Doppelbedienung A+B Taste, springt 2 x grosser_sendersprung weiter
 
