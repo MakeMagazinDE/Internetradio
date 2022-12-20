@@ -37,7 +37,7 @@ parent_dir = os.path.realpath(current_dir + "/../..")
 #################
 version = "2022.1-xmas"
 
-display_operating_instrcutions = False       # display_operating_instrcutions True/False
+display_operating_instructions = False       # display_operating_instructions True/False
 
 ###########################
 # mpd m3u Senderablageort #
@@ -259,7 +259,7 @@ def ZeilenABCD_RUMode(v):
     logger.debug("ZeilenABCD_RUMode")
 
     # Bedienungsanleitung
-    if display_operating_instrcutions:
+    if display_operating_instructions:
         za = "Bedienungsanleitung "
         zb = "anzeigen? Dann nun  "
         zc = "      OK-Taste      "
