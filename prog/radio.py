@@ -370,9 +370,9 @@ def ZeilenABCD_RUMode(v):
 
     anzahl_sender()
     # SD Karte freier Speicher in Prozent
-    verw_speicherBASH = "df -h | grep /dev/root | cut -b 38-39"                     # Befehl zum Auslesen des belegten Speichers in Prozent
-    verw_speicher = subprocess.check_output([verw_speicherBASH], shell=True, text=True)        # Auslesen der prozentualen Belegung
-    verw_speicher = verw_speicher.strip("\n")                                       # Umbruch durch Leerzeichen ersetzen
+    verw_speicherBASH = "df -h | grep /dev/root | awk '{print $5}'"                     # Befehl zum Auslesen des belegten Speichers in Prozent
+    verw_speicher = subprocess.check_output([verw_speicherBASH], shell=True, text=True) # Auslesen der prozentualen Belegung
+    verw_speicher = verw_speicher.strip("\n").replace('%', '')                                       # Umbruch durch Leerzeichen ersetzen
     frei_speicher = 100 - int(verw_speicher)
 
     # Version
