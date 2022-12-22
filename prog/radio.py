@@ -35,8 +35,6 @@ version = "2022.1"
 
 display_operating_instrcutions = False       # display_operating_instrcutions True/False
 
-grosser_sendersprung = 5              # Doppelbedienung A+B Taste, springt 2 x grosser_sendersprung weiter
-
 ###########################
 # mpd m3u Senderablageort #
 ###########################
@@ -82,7 +80,6 @@ alleZeichen = zahlen + buchstaben + sonderzeichen              # alle Zeichen
 sz = 10                                                        # selektiertes Zeichen beim Programmstart
 aktuellesZeichen = ""                                          # Vorbelegung
 bez = ""                                                       # Vorbelegung für bisher eingewaehlte Zeichen
-ssid = ""                                                      # Vorbelegung
 
 
 ###############################
@@ -98,10 +95,6 @@ TasteHoch=7
 TasteRunter=16
 TasteModus=13
 TasteStandby=15
-klatschsensor=36
-TasteFavoritsender1= 29
-TasteFavoritsender2= 31
-TasteMerker= 33
 
 
 ##################
@@ -111,10 +104,6 @@ GPIO.setup(TasteHoch, GPIO.IN)                                   # Taster Hoch
 GPIO.setup(TasteRunter, GPIO.IN)                                 # Taster Runter
 GPIO.setup(TasteModus, GPIO.IN)                                  # taster Online/Offline-MP3 Modus
 GPIO.setup(TasteStandby, GPIO.IN)                                # Standby Button
-GPIO.setup(klatschsensor, GPIO.IN)                               # Klatschsensor
-GPIO.setup(TasteFavoritsender1, GPIO.IN)                         # Favoritsender1
-GPIO.setup(TasteFavoritsender2, GPIO.IN)                         # Favoritsender1
-GPIO.setup(TasteMerker, GPIO.IN)                                 # Song merken in Datei
 
 
 ###################
@@ -153,40 +142,20 @@ def ZeileC_ip_anzeige():
         zc = "   ---.---.---.---  "                               # wenn keine IP vergeben, dann davon ausgehen, dass Verbindung nicht möglich
     return zc                                                     # Rückgabe der Ip für Zeile B
 
-# Buchstabenfolge in Zeile 2 anzeigen
-def Buchstabenanzeige(selektpos):
-    global alleZeichen, aktuellesZeichen, sz
-    if selektpos == len(alleZeichen)-3:
-        sz = -3
-    elif selektpos == (len(alleZeichen) -3) * (-1):
-        sz = 3
-    buchstabenzeile = "<<< " + alleZeichen[selektpos-2] + " " + alleZeichen[selektpos-1] + " [" + alleZeichen[selektpos] + "] " + alleZeichen[selektpos+1] + " " + alleZeichen[selektpos+2] + " >>>"
-    anzeige_einzeilig(buchstabenzeile, 2)
-    aktuellesZeichen=alleZeichen[selektpos]
-
 ####################
 # Modus-Funktionen #
 ####################
-# Radio oder MP3 Modus - (C)Taste - bzw. in W-LAN Konfigurationsmodus (Modus 91/92) - Buchstabenwahl
+# Radio oder MP3 Modus
 def RAModeOrMP3Mode( pin ):
-    global modus, aktuelles_Zeichen, bez
-    if modus == 91 or modus == 92:
-        bez = bez + aktuellesZeichen
-        if len(bez) > 17:
-            bezanz = ".. " + bez[-17:]
-        else:
-            bezanz = bez
-        anzeige_einzeilig(bezanz,3)
-    elif modus == 1:
+    global modus
+    if modus == 1:
         MP3Mode()
-    elif modus < 90:
-        anzahl_sender()
-        RAMode()
+
+    anzahl_sender()
+    RAMode()
 
 # RunUp Modus - einmalig beim Hochfahren
 def RUMode():
-    global modus
-    modus = 0
     os.system(mpc["clear"])                                          # mpc clear
     os.system(mpc["update"])                                         # mpc update
     os.system('mpg321 ' + parent_dir + '/conf/StartUp.mp3')         # Start-Sound abspielen
@@ -212,40 +181,18 @@ def MP3Mode():
     os.system(mpc["shuffle"])                                        # mpc shuffle playliste zusammenstellen
     os.system(mpc["play"] + "1")                                     # mpc play mp3s vom ersten Song an
 
-# Standby Modus - (D)Taste bzw. in der W-LAN Konfiguration (Modus 91/92) - Eingabe fertig
+# Standby Modus - (D)Taste
 def SBMode( pin ):
-    global modus, bez, ssid
-    if modus == 91:
-        ssid=bez
-        modus = 92
-        bez = ""
-        zd = "SSID - übernommen!"
-        anzeige_einzeilig(zd,4)
-        time.sleep(2)
-        ZeilenABCD_WLAN_konf_Key_eingabe()
-    elif modus == 92:
-        key=bez
-        if len(key) < 8:                                              # zu wenige eingegebene Zeichen im Key
-            modus = 99
-            bez= ""
-        else:
-            modus = 93
-            bez= ""                                                   # zur Sicherheit leeren
-            zd = "KEY - übernommen!"
-            anzeige_einzeilig(zd,4)
-            time.sleep(3)
-            wpasupplicant(ssid, key)
-            RBMode()
-    else:
-        time.sleep(0.5)                                               # Zeit für Doppeltastenbedienung geben
-        if (GPIO.input(TasteHoch) == GPIO.LOW) and (GPIO.input(TasteStandby) == GPIO.LOW):   # Wenn (A)Taste und (D)Taste zusammen gedrückt werden, dann NEUSTART
-            RBMode()
-        elif (GPIO.input(TasteRunter) == GPIO.LOW) and (GPIO.input(TasteStandby) == GPIO.LOW): # Wenn (B)Taste und (D)Taste zusammen gedrückt werden, dann RUNTERFAHREN
-            SDMode()
-        else:                                                         # Standby einleiten
-            modus = 31                                                # SBMode 3 1     In den Standby
-            os.system(mpc["stop"])                                    # mpc Abspielen stoppen
-            wlanaus()                                                 # W-LAN Adapter aus
+    global modus, bez
+    time.sleep(0.5)                                               # Zeit für Doppeltastenbedienung geben
+    if (GPIO.input(TasteHoch) == GPIO.LOW) and (GPIO.input(TasteStandby) == GPIO.LOW):   # Wenn (A)Taste und (D)Taste zusammen gedrückt werden, dann NEUSTART
+        RBMode()
+    elif (GPIO.input(TasteRunter) == GPIO.LOW) and (GPIO.input(TasteStandby) == GPIO.LOW): # Wenn (B)Taste und (D)Taste zusammen gedrückt werden, dann RUNTERFAHREN
+        SDMode()
+    else:                                                         # Standby einleiten
+        modus = 31                                                # SBMode 3 1     In den Standby
+        os.system(mpc["stop"])                                    # mpc Abspielen stoppen
+        wlanaus()                                                 # W-LAN Adapter aus
 
 # Reboot Modus
 def RBMode():                                                         # Modus RBMode
@@ -395,6 +342,13 @@ def ZeileA_RAMode_MP3Mode_SBMode():                                             
         time.sleep(4.0)
         return za
 
+def get_stations():
+    stations = ""
+    with open(str(radio_playlist), 'rb') as f:
+        stations = f.readlines()[6:]
+    return [station.split('#')[1].strip() for station in stations]
+
+
 # ZeileB_RAMode
 def ZeileB_RAMode():                                                                 # Funktionsdefinition zum Ermitteln des Strings für Zeile B im RadioModus
     global sender
@@ -415,10 +369,7 @@ def ZeileB_RAMode():                                                            
                 st = str(st_int)                                                     # Wenn ausgelesene Sendernummer zweistellig dann 1 zu 1 in st variable
             st_anwahl = st_int -1                                                    # Senderstationsnummer -1 um in der Liste den richtigen Sendernamen zu wählen
             # Sendernamen aus playlist-Kommentaren auslesen
-            stations = ""
-            with open(str(radio_playlist), 'rb') as f:
-                stations = f.readlines()[6:]
-            sn = [station.split('#')[1].strip() for station in stations]
+            sn = get_stations()
             snl = len(sn[st_anwahl])                                                 # Sendernamenlänge des durch die Stationsnummer ermittelten Namens
             if (snl > 15):                                                           # Sendernamen-String kürzen wenn länger als 15 Zeichen
                 x = snl - 15                                                         # Ermitteln um wie viele Zeichen gekürzt werden muss... um x Zeichen
@@ -511,17 +462,11 @@ def ZeileBC_MERK():
 # Senderwechsel/Songwechsel hoch SWH bzw. in W-LAN Konfigurationsmodus  - Buchstabe vor
 def SWH( pin ):
     print("Taste hoch")
-    global sender, AnzSender, modus, sz, grosser_sendersprung
-    if modus == 91 or modus == 92:
-        sz = sz + 1
-        Buchstabenanzeige(sz)
-    elif modus == 1:                                                                      # Das wird im Radio Modus gemacht
+    global sender, AnzSender, modus, sz
+    if modus == 1:                                                                      # Das wird im Radio Modus gemacht
         anzahl_sender()                                                                   # Anzahl Sender aktualisieren
         time.sleep(0.3)                                                                   # Zeit für Doppelbedienung geben,
-        if (GPIO.input(TasteHoch) == GPIO.LOW) and (GPIO.input(TasteRunter) == GPIO.LOW): # Wenn Hoch und Runter zusammen gedrückt ist
-            sender = sender + grosser_sendersprung                                        # Sendersprung Doppeltaste
-        else:
-            sender = sender + 1                                                           # Sender +1
+        sender = sender + 1                                                           # Sender +1
         if sender > AnzSender :                                                           # Wenn Senderliste am Ende dann mit erstem Sender weiter
             sender = sender - AnzSender
         os.system(mpc["play"] + str(sender))
@@ -531,17 +476,11 @@ def SWH( pin ):
 # Senderwechsel/Songwechsel runter SWR bzw. in W-LAN Konfigurationsmodus  - Buchstabe zurück
 def SWR( pin ):
     print("Taste runter")
-    global sender, AnzSender, modus, sz, grosser_sendersprung
-    if modus == 91 or modus == 92:
-        sz = sz - 1
-        Buchstabenanzeige(sz)
-    elif modus == 1:                                                                      # Das wird im Radio Modus gemacht
+    global sender, AnzSender, modus, sz
+    if modus == 1:                                                                      # Das wird im Radio Modus gemacht
         anzahl_sender()                                                                   # Anzahl Sender aktualisieren
         time.sleep(0.3)                                                                   # Zeit für Doppelbedienung geben
-        if (GPIO.input(TasteHoch) == GPIO.LOW) and (GPIO.input(TasteRunter) == GPIO.LOW): # Wenn Hoch und Runter zusammen gedrückt ist
-            sender = sender + grosser_sendersprung                                        # Sendersprung Doppeltaste
-        else:
-            sender = sender -1                                                            # Sender -1
+        sender = sender -1                                                            # Sender -1
         if sender > AnzSender :                                                           # Wenn Senderliste am Ende dann mit erstem Sender weiter
             sender = sender - AnzSender
         elif sender <1:                                                                   # Wenn Senderliste auf erstem Sender, dann zu letztem Sender
@@ -550,53 +489,11 @@ def SWR( pin ):
     elif modus == 2:                                                                      # Das wird im MP3 Modus gemacht
         os.system(mpc["prev"])
 
-# Favoritsender 1 X Taste
-def favorit1( pin ):
-    global modus, sender, fav1
-    if modus == 1 :
-        time.sleep(0.3)                                                                   # Zeit für Doppelbedienung geben
-        if (GPIO.input(TasteFavoritsender1) == GPIO.LOW):                                 # Wenn Favorit Taste X länger gedrückt, speichern
-            fav1 = sender                                                                 # Aktuellen Sender auf Taste speichern
-            modus = 6                                                                     # Anzeige Favorit übernommen
-        else:                                                                             # Favorit apspielen
-            sender = fav1
-            os.system(mpc["play"] + str(sender))
-    elif modus == 2 :
-        modus = 7
-
-# Favoritsender 2 Y Taste
-def favorit2( pin ):
-    global modus, sender, fav2
-    if modus == 1 :
-        time.sleep(0.3)                                                                   # Zeit für Doppelbedienung geben
-        if (GPIO.input(TasteFavoritsender2) == GPIO.LOW):                                 # Wenn Favorit Taste Y länger gedrückt, speichern
-            fav2 = sender                                                                 # Aktuellen Sender auf Taste speichern
-            modus = 6                                                                     # Anzeige Favorit übernommen
-        else:                                                                             # Favorit apspielen
-            sender = fav2
-            os.system(mpc["play"] + str(sender))
-    elif modus == 2 :
-        modus = 7
-
-# Song merken
-def song_merken( pin ):                                                                   # Song merken
-    global modus, sender
-    if modus == 1:
-        song, anzzeichen = ZeileC_RAMode_MP3Mode()
-        file = open(parent_dir + "/conf/merk.txt", "a+")                             # Datei öffnen, wenn nicht vorhanden dann anlegen.
-        file.write(song + "\n")                                                           # Song und Umbruch schreiben
-        file.close()
-        modus = 8
-    elif modus == 2 :
-        modus = 7
-
 # Anzahl der gefundenen Sender aus Sender-Datei
 def anzahl_sender():
     global AnzSender
-    AnzSenderBASH = "ls | awk '/http/ {print $3}' " + str(radio_playlist) + " | wc -l"     # Befehl-Anzahl der RadioSender aus mpd radio playlist
-    AnzSender = subprocess.check_output([AnzSenderBASH], shell=True, text=True)            # Anzahl Sender ermitteln mit AWK Befehl
-    AnzSender = AnzSender.strip("\n")                                                      # Umbruch raus
-    AnzSender = int(AnzSender)                                                             # Umwandeln in int
+    sn = get_stations()
+    AnzSender = len(AnzSender)                                                            # Umwandeln in int
 
 
 ####################
@@ -604,10 +501,9 @@ def anzahl_sender():
 ####################
 a = 0                          # Einmalige Initialisierung für Zeile C Startindex der Ausgabe
 z = 20                         # Einmalige Initialisierung für Zeile C Endindex der Ausgabe
-fav1 = 1                       # Vorbelegung Favoritsender1 beim Boot
-fav2 = 2                       # Vorbelegung Favoritsender2 beim Boot
 AnzSender = 0                  # Senderanzahl als GLOBAL Variable da Interrupt-Aufrufe keine Rückgabe liefern, 0 als Vorbelegung
 sender = 1                     # Aktuelle Sendernummer als GLOBAL Variable da Interrupt-Aufrufe keine Rückgabe liefern, 1 als erster Sender nach Start
+modus = 0
 # my_lcd = lcd()                 # LCD initialisieren
 RUMode()                   # RunUp sobald
 ZeilenABCD_RUMode(version) # RunUp Anzeige mit Übergabe der Versionsnummer
@@ -617,22 +513,14 @@ RAMode()                   # Radio nach RunUp ohne Interrupt starten
 ######################################
 # TastenInerrupts mit Multithreading #
 ######################################
-# Taste A Event Senderwechsel hoch
+# Next station
 GPIO.add_event_detect(TasteHoch, GPIO.FALLING, callback=SWH, bouncetime = 200)
-# Taste B Event Senderwechsel runter
+# Previous station
 GPIO.add_event_detect(TasteRunter, GPIO.FALLING, callback=SWR, bouncetime = 200)
 # Taste C Event Eigene Musik Zufallswiedergabe
 GPIO.add_event_detect(TasteModus, GPIO.FALLING, callback=RAModeOrMP3Mode, bouncetime = 200)
 # Taste D Event Standby
-GPIO.add_event_detect(TasteStandby, GPIO.FALLING, callback=SBMode,  bouncetime = 200)
-# Klatschsensor Senderwechsel hoch
-GPIO.add_event_detect(klatschsensor, GPIO.FALLING, callback=SWH, bouncetime = 2000)
-# Taste X Favoritsender1
-GPIO.add_event_detect(TasteFavoritsender1, GPIO.FALLING, callback=favorit1, bouncetime = 200)
-# Taste Y Favoritsender2
-GPIO.add_event_detect(TasteFavoritsender2, GPIO.FALLING, callback=favorit2, bouncetime = 200)
-# Taste Z Songdaten in Merkliste
-GPIO.add_event_detect(TasteMerker, GPIO.FALLING, callback=song_merken, bouncetime = 200)
+GPIO.add_event_detect(TasteStandby, GPIO.FALLING, callback=SBMode, bouncetime = 200)
 
 
 #################
@@ -640,7 +528,6 @@ GPIO.add_event_detect(TasteMerker, GPIO.FALLING, callback=song_merken, bouncetim
 #################
 while True:
     try:
-
         if modus == 1:
             za = ZeileA_RAMode_MP3Mode_SBMode()
             zb = ZeileB_RAMode()
@@ -722,9 +609,6 @@ while True:
             anzeige(za,zb,zc,zd)
             time.sleep(3.0)
             modus = 1
-        elif modus == 99:
-            ZeilenABCD_WLAN_konf_Zeichen8()
-            modus = 4
         time.sleep(0.7)                                       # Display Aktualisierungszeit z.B. für Scrolltext, also nach welcher Zeit soll die Schleife wieder von oben anfangen.
 
     except KeyboardInterrupt:                                 # Sonderbehandlung bei STRG+C
