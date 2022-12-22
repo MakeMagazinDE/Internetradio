@@ -410,7 +410,7 @@ def ZeileA_RAMode_MP3Mode_SBMode():                                             
     # Zeit
     zeit = time.strftime("%H:%M")                                                    # Aktuelle Zeit als String
     # W-LAN Signal ermitteln
-    slBASH = "iwconfig wlan0 | grep Signal | awk '{print $4}' | cut -c7-8"           # Bash-Befehl zur Ermittlung des SignalLevels
+    slBASH = "iwconfig wlan0 | grep Signal | awk '{print $4}' | cut -c8-9"           # Bash-Befehl zur Ermittlung des SignalLevels
     try:
         sl = int(subprocess.check_output([slBASH], shell=True, text=True))                      # Signallevel als Integer ermitteln, wenn W-LAN weg, dann kurzzeitig keine Wandlung möglich da ValueError -> dann except.
         if (sl <=25) and (sl >0):                                                    # Signalstärke sehr schlecht
