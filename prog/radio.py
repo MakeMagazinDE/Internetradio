@@ -55,16 +55,16 @@ PH = "kradio@kradio"                                                  # Beispiel
 # mpc Befehle in einem Dictionary - für Dictionarys ist kein "global" in Funktionsdefinitionen nötig. #
 #######################################################################################################
 mpc = {
-"clear"    : "mpc -h " + str(PH) + " clear",                                      # Playlist leeren
-"update"   : "mpc -h " + str(PH) + " update",                                     # Playlist update
-"play"     : "mpc -h " + str(PH) + " play ",                                      # Abspielen beginnen
-"stop"     : "mpc -h " + str(PH) + " stop",                                       # Abspielen stoppen
-"loadlist" : "mpc -h " + str(PH) + " load radio_sender",                          # Sender aus Datei laden
-"next"     : "mpc -h " + str(PH) + " next",                                       # Nächter Sender/Song
-"prev"     : "mpc -h " + str(PH) + " prev",                                       # Vorheriger Sender/Song
-"shuffle"  : "mpc -h " + str(PH) + " shuffle",                                    # Playlist zufällig zusammenstellen
-"addmusic" : "cd " + parent_dir + "/music && mpc -h " + str(PH) + " add *.*",    # Alle MP3 Songs aus diesem Verzeichnis einlesen
-"songinfo" : "mpc -h " + str(PH) + " current"                                     # Aktuelle Songinfo/Radioinfo
+    "clear"    : "mpc -h " + str(PH) + " clear",                                      # Playlist leeren
+    "update"   : "mpc -h " + str(PH) + " update",                                     # Playlist update
+    "play"     : "mpc -h " + str(PH) + " play ",                                      # Abspielen beginnen
+    "stop"     : "mpc -h " + str(PH) + " stop",                                       # Abspielen stoppen
+    "loadlist" : "mpc -h " + str(PH) + " load radio_sender",                          # Sender aus Datei laden
+    "next"     : "mpc -h " + str(PH) + " next",                                       # Nächter Sender/Song
+    "prev"     : "mpc -h " + str(PH) + " prev",                                       # Vorheriger Sender/Song
+    "shuffle"  : "mpc -h " + str(PH) + " shuffle",                                    # Playlist zufällig zusammenstellen
+    "addmusic" : "cd " + parent_dir + "/music && mpc -h " + str(PH) + " add *.*",    # Alle MP3 Songs aus diesem Verzeichnis einlesen
+    "songinfo" : "mpc -h " + str(PH) + " current"                                     # Aktuelle Songinfo/Radioinfo
 }
 
 
