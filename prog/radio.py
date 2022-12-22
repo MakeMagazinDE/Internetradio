@@ -128,7 +128,7 @@ global modus                                                     # Hier global, 
 def wlanein():
     logger.debug("wlanein")
     os.system("sudo ip link set wlan0 up")
-    time.sleep(9.0)                                              # Zeit für W-LAN Hardware geben
+    time.sleep(5.0)                                              # Zeit für W-LAN Hardware geben
 
 # W-LAN Adapter Aus
 def wlanaus():
@@ -587,8 +587,8 @@ while True:
                 ueberhang = zc_tmp_len -20                    # Ermittle Überhang von Zeichen also die Über die Displayreihe hinaus gehen
                 if a <= ueberhang:                            # Solange machen bis alle Überhangzeichen abgearbeitet sind,
                     zc = zc_tmp[a:z]                          # Ausgeben und verschieben der Ausgabe des Strings immer um ein Zeichen nach rechts,
-                    a = a+1                                   # Wenn a +1 den Überhang erreicht hat, ist der Text einmal komplett durchgelaufen.
-                    z = z+1                                   # Z also Ende der Ausgabe muss mit rücken
+                    a = a+5                                   # Wenn a +1 den Überhang erreicht hat, ist der Text einmal komplett durchgelaufen.
+                    z = z+5                                   # Z also Ende der Ausgabe muss mit rücken
                 else:
                     a = 0                                     # Sobald alle Überhangzeichen durchgelaufen wieder a auf 0
                     z = 20                                    # Sobald alle Überhangzeichen durchgelaufen wieder z auf 0
