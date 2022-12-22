@@ -214,7 +214,7 @@ def SBMode(pin):
     else:                                                         # Standby einleiten
         modus = 31                                                # SBMode 3 1     In den Standby
         os.system(mpc["stop"])                                    # mpc Abspielen stoppen
-        wlanaus()                                                 # W-LAN Adapter aus
+        # wlanaus()                                                 # W-LAN Adapter aus
 
 # Reboot Modus
 def RBMode():                                                         # Modus RBMode
