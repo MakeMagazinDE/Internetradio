@@ -450,9 +450,10 @@ def ZeileB_RAMode():                                                            
                 st = str(st_int)                                                     # Wenn ausgelesene Sendernummer zweistellig dann 1 zu 1 in st variable
             st_anwahl = st_int -1                                                    # Senderstationsnummer -1 um in der Liste den richtigen Sendernamen zu wählen
             # Sendernamen aus playlist-Kommentaren auslesen
-            snBASH = "awk '/http/ {print $3}' " + str(radio_playlist)                # Befehl zur Ermittlung der Sendernamen
-            sn = subprocess.check_output([snBASH], shell=True, text=True)                       # Auslesen der Sendernamen
-            sn = sn.split()                                                          # Sendernamen umwandeln als Liste
+            stations = ""
+            with open(str(radio_playlist), 'rb') as f:
+                stations = f.readlines()[6:]
+            sn = [station.split('#')[1].strip() for station in stations]
             snl = len(sn[st_anwahl])                                                 # Sendernamenlänge des durch die Stationsnummer ermittelten Namens
             if (snl > 15):                                                           # Sendernamen-String kürzen wenn länger als 15 Zeichen
                 x = snl - 15                                                         # Ermitteln um wie viele Zeichen gekürzt werden muss... um x Zeichen

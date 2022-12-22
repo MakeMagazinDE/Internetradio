@@ -2,7 +2,6 @@
 # Es sind max. 99 Sender-Stationen in dieser Liste einzutragen.          #
 # Format:        SENDERSTREAMADRESSE # SENDERNAME                        #
 # Sendername max. 15 Zeichen                                             #
-# Der Sendername selber darf kein Leerzeichen enthalten.                 #
 ##########################################################################
 
 https://dispatcher.rndfnk.com/br/br24live/live/aac/low # BR24live
