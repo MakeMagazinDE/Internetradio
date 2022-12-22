@@ -25,6 +25,9 @@ import time, os, sys
 from datetime import date
 from lc_display import lcd
 import subprocess
+import logging
+
+logger = logging.getLogger("radio")
 
 current_dir = os.path.realpath(__file__)
 parent_dir = os.path.realpath(current_dir + "/../..")
@@ -117,21 +120,25 @@ global modus                                                     # Hier global, 
 ###################################################
 # W-LAN Adapter Ein
 def wlanein():
+    logger.debug("wlanein")
     os.system("sudo ip link set wlan0 up")
     time.sleep(9.0)                                              # Zeit für W-LAN Hardware geben
 
 # W-LAN Adapter Aus
 def wlanaus():
+    logger.debug("wlanaus")
     os.system("sudo ip link set wlan0 down")
 
 # Anzeige aus
 def anzaus():
+    logger.debug("anzaus")
     # global my_lcd
     # my_lcd.backlight_off()
     pass
 
 # IP Adresse ermitteln
 def ZeileC_ip_anzeige():
+    logger.debug("ZeileC_ip_anzeige")
     ipadrBASH = "hostname -I | cut -f1 -d' '"                     # IP ermitteln
     ipadranz = subprocess.check_output([ipadrBASH], shell=True, text=True)   # IP in Variable
     ipadranz = ipadranz.strip("\n")                               # Umbruch durch Leerzeichen ersetzen
@@ -147,6 +154,7 @@ def ZeileC_ip_anzeige():
 ####################
 # Radio oder MP3 Modus
 def RAModeOrMP3Mode( pin ):
+    logger.debug("RAModeOrMP3Mode")
     global modus
     if modus == 1:
         MP3Mode()
@@ -156,12 +164,14 @@ def RAModeOrMP3Mode( pin ):
 
 # RunUp Modus - einmalig beim Hochfahren
 def RUMode():
+    logger.debug("RUMode")
     os.system(mpc["clear"])                                          # mpc clear
     os.system(mpc["update"])                                         # mpc update
     os.system('mpg321 ' + parent_dir + '/conf/StartUp.mp3')         # Start-Sound abspielen
 
 # Radio-Modus
 def RAMode():
+    logger.debug("RAMode")
     global modus, sender
     if (modus == 0) or (modus == 31) or (modus == 32):
         modus = 1
@@ -173,6 +183,7 @@ def RAMode():
 
 # MP3 Modus
 def MP3Mode():
+    logger.debug("MP3Mode")
     global modus
     modus = 2                                                        # Modus MP3Mode
     os.system(mpc["update"])                                         # mpc update
@@ -182,12 +193,13 @@ def MP3Mode():
     os.system(mpc["play"] + "1")                                     # mpc play mp3s vom ersten Song an
 
 # Standby Modus - (D)Taste
-def SBMode( pin ):
+def SBMode(pin):
+    logger.debug("SBMode")
     global modus, bez
     time.sleep(0.5)                                               # Zeit für Doppeltastenbedienung geben
-    if (GPIO.input(TasteHoch) == GPIO.LOW) and (GPIO.input(TasteStandby) == GPIO.LOW):   # Wenn (A)Taste und (D)Taste zusammen gedrückt werden, dann NEUSTART
+    if (GPIO.input(TasteRechts) == GPIO.LOW) and (GPIO.input(TasteStandby) == GPIO.LOW):   # Wenn (A)Taste und (D)Taste zusammen gedrückt werden, dann NEUSTART
         RBMode()
-    elif (GPIO.input(TasteRunter) == GPIO.LOW) and (GPIO.input(TasteStandby) == GPIO.LOW): # Wenn (B)Taste und (D)Taste zusammen gedrückt werden, dann RUNTERFAHREN
+    elif (GPIO.input(TasteLinks) == GPIO.LOW) and (GPIO.input(TasteStandby) == GPIO.LOW): # Wenn (B)Taste und (D)Taste zusammen gedrückt werden, dann RUNTERFAHREN
         SDMode()
     else:                                                         # Standby einleiten
         modus = 31                                                # SBMode 3 1     In den Standby
@@ -196,6 +208,7 @@ def SBMode( pin ):
 
 # Reboot Modus
 def RBMode():                                                         # Modus RBMode
+    logger.debug("RBMode")
     global modus
     modus = 4
     os.system(mpc["stop"])                                            # Player stop
@@ -203,6 +216,7 @@ def RBMode():                                                         # Modus RB
 
 # ShutDown Modus
 def SDMode():
+    logger.debug("SDMode")
     global modus
     modus = 5
     os.system(mpc["stop"])                                            # mpc-Abspielen stoppen
@@ -214,6 +228,7 @@ def SDMode():
 ######################
 # Allgemeine Anzeige-Funktion für alles 4 Zeilen
 def anzeige(ZeileA,ZeileB,ZeileC,ZeileD):                             # Funktionsdefinitionsdefinition für Anzeigeausgabe
+    logger.debug("anzeige")
     # global my_lcd                                                     # Beispiel:
     # my_lcd.display_string(ZeileA, 1)                                  #           ---<12:13>-<*** >---     ZeileA  zeit & W-LAN Empfangsqualität qual
     # my_lcd.display_string(ZeileB, 2)                                  #           (06) NDR2-Nieders.       ZeileB  StationsNummer st und SenderName sn max. 15 Zeichen
@@ -223,11 +238,13 @@ def anzeige(ZeileA,ZeileB,ZeileC,ZeileD):                             # Funktion
 
 # Allgemeine Anzeige-Funktion für einzeilige Änderungen
 def anzeige_einzeilig(string, zeile):
+    logger.debug("anzeige_einzeilig")
     # my_lcd.display_string(string, zeile)
     pass
 
 # Zeilen ABCD RUMode
 def ZeilenABCD_RUMode(v):
+    logger.debug("ZeilenABCD_RUMode")
 
     # Bedienungsanleitung
     if display_operating_instrcutions:
@@ -319,6 +336,7 @@ def ZeilenABCD_RUMode(v):
 
 # ZeileA_RAMode_MP3Mode_SBMode
 def ZeileA_RAMode_MP3Mode_SBMode():                                                  # Funktionsdefinition zum Ermitteln des Strings für Zeile A im Radio-, Offline- & Standby-Modus
+    logger.debug("ZeileA_RAMode_MP3Mode_SBMode")
     # Zeit
     zeit = time.strftime("%H:%M")                                                    # Aktuelle Zeit als String
     # W-LAN Signal ermitteln
@@ -343,6 +361,7 @@ def ZeileA_RAMode_MP3Mode_SBMode():                                             
         return za
 
 def get_stations():
+    logger.debug("get_stations")
     stations = ""
     with open(str(radio_playlist), 'rb') as f:
         stations = f.readlines()[6:]
@@ -351,6 +370,7 @@ def get_stations():
 
 # ZeileB_RAMode
 def ZeileB_RAMode():                                                                 # Funktionsdefinition zum Ermitteln des Strings für Zeile B im RadioModus
+    logger.debug("ZeileB_RAMode")
     global sender
     stBASH = "mpc -h " + str(PH) + " -f %name% | grep playing | cut -c12-13"         # Bash-mpc Befehl mit grep&cut zum SenderstationsNr.-Auslesen
     st_tmp = subprocess.check_output([stBASH], shell=True, text=True)                           # Sendernummer auslesen
@@ -384,6 +404,7 @@ def ZeileB_RAMode():                                                            
 
 # ZeileC_RAMode_MP3Mode
 def ZeileC_RAMode_MP3Mode():                                                         # Funktionsdefinition zum Ermitteln des Strings für Zeile C im RadioModus & MP3 Modus
+    logger.debug("ZeileC_RAMode_MP3Mode")
     info_tmp = subprocess.check_output([mpc["songinfo"]], shell=True, text=True)
     if not "#" in info_tmp:
         info_tmp = info_tmp.strip("\n")                                              # Umbruch raus
@@ -400,6 +421,7 @@ def ZeileC_RAMode_MP3Mode():                                                    
 
 # ZeileD_RAMode_MP3Mode_SBMode
 def ZeileD_RAMode_MP3Mode_SBMode():                                                  # Funktionsdefinition zum Ermitteln des Strings für Zeile D im Radiomodus
+    logger.debug("ZeileD_RAMode_MP3Mode_SBMode")
     # Wochentag
     WoTaNa = ["Mo.","Di.","Mi.","Do.","Fr.","Sa.","So."]                             # Selbst definierte WochenTagNamen
     WoTaNu = date.today().weekday()                                                  # WochenTagNummer ermitteln 0=Montag 6=Sonntag
@@ -412,17 +434,20 @@ def ZeileD_RAMode_MP3Mode_SBMode():                                             
 
 # ZeilenBC_MP3Mode
 def ZeileB_MP3Mode():
+    logger.debug("ZeileB_MP3Mode")
     zb = "      mp3-Mix       "
     return zb
 
 # ZeilenBC_SBMode
 def ZeilenBC_SBMode():
+    logger.debug("ZeilenBC_SBMode")
     zb = "      Standby       "
     zc = "     W-LAN AUS      "
     return zb,zc
 
 # Reboot Display Strings zusammenstellen und zur Anzeige bringen
 def ZeilenABCD_RBMode():
+    logger.debug("ZeilenABCD_RBMode")
     za = "--------------------"
     zb = "      Neustart      "
     zc = "    Bitte warten    "
@@ -431,6 +456,7 @@ def ZeilenABCD_RBMode():
 
 # Anzeige SDMode
 def ZeilenABCD_SDMode():
+    logger.debug("ZeilenABCD_SDMode")
     za = "--------------------"
     zb = "     Radio wird     "
     zc = "  heruntergefahren  "
@@ -439,18 +465,21 @@ def ZeilenABCD_SDMode():
 
 # Anzeige Favorit gespeichert
 def ZeilenBC_FAVMode():
+    logger.debug("ZeilenBC_FAVMode")
     zb = "       Favorit      "
     zc = "     gespeichert    "
     return zb,zc
 
 # Anzeige Keine Funktion in diesem Modus
 def ZeileBC_KeineFunktion():
+    logger.debug("ZeileBC_KeineFunktion")
     zb = "  In diesem Modus   "
     zc = "  keine Funktion!   "
     return zb,zc
 
 # Anzeige Song gemerkt
 def ZeileBC_MERK():
+    logger.debug("ZeileBC_MERK")
     zb = "Song wurde gemerkt! "
     zc = "smb: conf/merk.txt  "
     return zb,zc
@@ -461,7 +490,7 @@ def ZeileBC_MERK():
 ############################
 # Senderwechsel/Songwechsel hoch SWH bzw. in W-LAN Konfigurationsmodus  - Buchstabe vor
 def SWH( pin ):
-    print("Taste hoch")
+    logger.debug("Taste hoch")
     global sender, AnzSender, modus, sz
     if modus == 1:                                                                      # Das wird im Radio Modus gemacht
         anzahl_sender()                                                                   # Anzahl Sender aktualisieren
@@ -475,7 +504,7 @@ def SWH( pin ):
 
 # Senderwechsel/Songwechsel runter SWR bzw. in W-LAN Konfigurationsmodus  - Buchstabe zurück
 def SWR( pin ):
-    print("Taste runter")
+    logger.debug("Taste runter")
     global sender, AnzSender, modus, sz
     if modus == 1:                                                                      # Das wird im Radio Modus gemacht
         anzahl_sender()                                                                   # Anzahl Sender aktualisieren
@@ -491,6 +520,7 @@ def SWR( pin ):
 
 # Anzahl der gefundenen Sender aus Sender-Datei
 def anzahl_sender():
+    logger.debug("anzahl_sender")
     global AnzSender
     sn = get_stations()
     AnzSender = len(AnzSender)                                                            # Umwandeln in int
@@ -526,9 +556,11 @@ GPIO.add_event_detect(TasteStandby, GPIO.FALLING, callback=SBMode, bouncetime = 
 #################
 # Dauerschleife #
 #################
+logger.debug("Start work loop...")
 while True:
     try:
         if modus == 1:
+            logger.debug("Mode 1: Radio")
             za = ZeileA_RAMode_MP3Mode_SBMode()
             zb = ZeileB_RAMode()
             zc_tmp, zc_tmp_len = ZeileC_RAMode_MP3Mode()      # Gibt die Sender-Song Info zurück n Zeichen
@@ -546,6 +578,7 @@ while True:
             zd = ZeileD_RAMode_MP3Mode_SBMode()
             anzeige(za,zb,zc,zd)
         elif modus == 2:
+            logger.debug("Mode 1: MP3 Player")
             za = ZeileA_RAMode_MP3Mode_SBMode()
             zb = ZeileB_MP3Mode()
             zc_tmp, zc_tmp_len = ZeileC_RAMode_MP3Mode()      # Gibt die Sender-Song Info zurück n Zeichen
@@ -563,6 +596,7 @@ while True:
             zd = ZeileD_RAMode_MP3Mode_SBMode()
             anzeige(za,zb,zc,zd)
         elif modus == 31:
+            logger.debug("Mode 1: Going into standby")
             za = ZeileA_RAMode_MP3Mode_SBMode()
             (zb,zc) = ZeilenBC_SBMode()
             zd = ZeileD_RAMode_MP3Mode_SBMode()
@@ -575,14 +609,17 @@ while True:
             anzaus()
             modus=32                                          # SB Phase 2 für "bereits im Standby" setzen
         elif modus == 32:
+            logger.debug("Mode 1: Standby")
             time.sleep(1.0)                                   # Energie sparen, Schleifendurchlauf verzögern, CPU in Pause.
         elif modus == 4:
+            logger.debug("Mode 1: Reboot")
             (za,zb,zc,zd) = ZeilenABCD_RBMode()
             anzeige(za,zb,zc,zd)
             time.sleep(3.0)
             os.system("sudo reboot")                          # Reboot
             time.sleep(3.0)
         elif modus == 5:
+            logger.debug("Mode 1: Shutdown")
             (za,zb,zc,zd) = ZeilenABCD_SDMode()
             anzeige(za,zb,zc,zd)
             time.sleep(3.0)
