@@ -95,21 +95,21 @@ GPIO.setmode(GPIO.BOARD)
 #############
 # Pin Namen #
 #############
-TasteRechts=7
-TasteLinks=16
-TasteOk=13
-TasteVolumeUp=15
-TasteVolumeDown=29
+KeyRight=7
+KeyLeft=16
+KeyOk=13
+KeyVolumeUp=15
+KeyVolumeDown=29
 
 
 ##################
 # Pins als Input #
 ##################
-GPIO.setup(TasteRechts, GPIO.IN)
-GPIO.setup(TasteLinks, GPIO.IN)
-GPIO.setup(TasteOk, GPIO.IN)
-GPIO.setup(TasteVolumeUp, GPIO.IN)
-GPIO.setup(TasteVolumeDown, GPIO.IN)
+GPIO.setup(KeyRight, GPIO.IN)
+GPIO.setup(KeyLeft, GPIO.IN)
+GPIO.setup(KeyOk, GPIO.IN)
+GPIO.setup(KeyVolumeUp, GPIO.IN)
+GPIO.setup(KeyVolumeDown, GPIO.IN)
 
 
 ###################
@@ -200,9 +200,9 @@ def SBMode(pin):
     logger.debug("SBMode")
     global modus, bez
     time.sleep(0.5)                                               # Zeit für Doppeltastenbedienung geben
-    if (GPIO.input(TasteRechts) == GPIO.LOW) and (GPIO.input(TasteOk) == GPIO.LOW):   # Wenn (A)Taste und (D)Taste zusammen gedrückt werden, dann NEUSTART
+    if (GPIO.input(KeyRight) == GPIO.LOW) and (GPIO.input(KeyOk) == GPIO.LOW):   # Wenn (A)Taste und (D)Taste zusammen gedrückt werden, dann NEUSTART
         RBMode()
-    elif (GPIO.input(TasteLinks) == GPIO.LOW) and (GPIO.input(TasteOk) == GPIO.LOW): # Wenn (B)Taste und (D)Taste zusammen gedrückt werden, dann RUNTERFAHREN
+    elif (GPIO.input(KeyLeft) == GPIO.LOW) and (GPIO.input(KeyOk) == GPIO.LOW): # Wenn (B)Taste und (D)Taste zusammen gedrückt werden, dann RUNTERFAHREN
         SDMode()
     else:                                                         # Standby einleiten
         modus = 31                                                # SBMode 3 1     In den Standby
@@ -257,7 +257,7 @@ def ZeilenABCD_RUMode(v):
         zd = "gedrückt halten.    "
         anzeige(za,zb,zc,zd)
         time.sleep(5)
-        if (GPIO.input(TasteOk) == GPIO.LOW):
+        if (GPIO.input(KeyOk) == GPIO.LOW):
             za = "--------------------"
             zb = "Bedienungsanleitung "
             zc = "  wird gestartet.   "
@@ -492,7 +492,7 @@ def ZeileBC_MERK():
 # Senderwechsel und Merker #
 ############################
 # Senderwechsel/Songwechsel hoch SWH bzw. in W-LAN Konfigurationsmodus  - Buchstabe vor
-def SWH( pin ):
+def SWH(pin):
     logger.debug("Taste hoch")
     global sender, AnzSender, modus, sz
     if modus == 1:                                                                      # Das wird im Radio Modus gemacht
@@ -506,7 +506,7 @@ def SWH( pin ):
         os.system(mpc["next"])
 
 # Senderwechsel/Songwechsel runter SWR bzw. in W-LAN Konfigurationsmodus  - Buchstabe zurück
-def SWR( pin ):
+def SWR(pin):
     logger.debug("Taste runter")
     global sender, AnzSender, modus, sz
     if modus == 1:                                                                      # Das wird im Radio Modus gemacht
@@ -547,11 +547,11 @@ RAMode()                   # Radio nach RunUp ohne Interrupt starten
 # TastenInerrupts mit Multithreading #
 ######################################
 # Next station
-GPIO.add_event_detect(TasteRechts, GPIO.FALLING, callback=SWH, bouncetime = 200)
+GPIO.add_event_detect(KeyRight, GPIO.FALLING, callback=SWH, bouncetime = 200)
 # Previous station
-GPIO.add_event_detect(TasteLinks, GPIO.FALLING, callback=SWR, bouncetime = 200)
+GPIO.add_event_detect(KeyLeft, GPIO.FALLING, callback=SWR, bouncetime = 200)
 # OK Key
-GPIO.add_event_detect(TasteOk, GPIO.FALLING, callback=SBMode, bouncetime = 200)
+GPIO.add_event_detect(KeyOk, GPIO.FALLING, callback=SBMode, bouncetime = 200)
 
 
 #################
