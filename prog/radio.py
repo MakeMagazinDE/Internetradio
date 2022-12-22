@@ -524,7 +524,7 @@ def anzahl_sender():
     logger.debug("anzahl_sender")
     global AnzSender
     sn = get_stations()
-    AnzSender = len(AnzSender)                                                            # Umwandeln in int
+    AnzSender = len(sn)                                                            # Umwandeln in int
 
 
 ####################
