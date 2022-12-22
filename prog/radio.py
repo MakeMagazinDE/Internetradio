@@ -27,8 +27,8 @@ from lc_display import lcd
 import subprocess
 import logging
 
+logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("radio")
-logger.setLevel(logging.DEBUG)
 
 current_dir = os.path.realpath(__file__)
 parent_dir = os.path.realpath(current_dir + "/../..")
