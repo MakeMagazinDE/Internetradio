@@ -98,16 +98,18 @@ GPIO.setmode(GPIO.BOARD)
 TasteRechts=7
 TasteLinks=16
 TasteOk=13
-TasteStandby=15
+TasteVolumeUp=15
+TasteVolumeDown=29
 
 
 ##################
 # Pins als Input #
 ##################
-GPIO.setup(TasteRechts, GPIO.IN)                                   # Taster Hoch
-GPIO.setup(TasteLinks, GPIO.IN)                                 # Taster Runter
-GPIO.setup(TasteOk, GPIO.IN)                                  # taster Online/Offline-MP3 Modus
-GPIO.setup(TasteStandby, GPIO.IN)                                # Standby Button
+GPIO.setup(TasteRechts, GPIO.IN)
+GPIO.setup(TasteLinks, GPIO.IN)
+GPIO.setup(TasteOk, GPIO.IN)
+GPIO.setup(TasteVolumeUp, GPIO.IN)
+GPIO.setup(TasteVolumeDown, GPIO.IN)
 
 
 ###################
@@ -198,9 +200,9 @@ def SBMode(pin):
     logger.debug("SBMode")
     global modus, bez
     time.sleep(0.5)                                               # Zeit für Doppeltastenbedienung geben
-    if (GPIO.input(TasteRechts) == GPIO.LOW) and (GPIO.input(TasteStandby) == GPIO.LOW):   # Wenn (A)Taste und (D)Taste zusammen gedrückt werden, dann NEUSTART
+    if (GPIO.input(TasteRechts) == GPIO.LOW) and (GPIO.input(TasteOk) == GPIO.LOW):   # Wenn (A)Taste und (D)Taste zusammen gedrückt werden, dann NEUSTART
         RBMode()
-    elif (GPIO.input(TasteLinks) == GPIO.LOW) and (GPIO.input(TasteStandby) == GPIO.LOW): # Wenn (B)Taste und (D)Taste zusammen gedrückt werden, dann RUNTERFAHREN
+    elif (GPIO.input(TasteLinks) == GPIO.LOW) and (GPIO.input(TasteOk) == GPIO.LOW): # Wenn (B)Taste und (D)Taste zusammen gedrückt werden, dann RUNTERFAHREN
         SDMode()
     else:                                                         # Standby einleiten
         modus = 31                                                # SBMode 3 1     In den Standby
