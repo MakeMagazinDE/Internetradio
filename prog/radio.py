@@ -55,16 +55,19 @@ PH = "kradio@kradio"                                                  # Beispiel
 # mpc Befehle in einem Dictionary - für Dictionarys ist kein "global" in Funktionsdefinitionen nötig. #
 #######################################################################################################
 mpc = {
-    "clear"    : "mpc -h " + str(PH) + " clear",                                      # Playlist leeren
-    "update"   : "mpc -h " + str(PH) + " update",                                     # Playlist update
-    "play"     : "mpc -h " + str(PH) + " play ",                                      # Abspielen beginnen
-    "stop"     : "mpc -h " + str(PH) + " stop",                                       # Abspielen stoppen
-    "loadlist" : "mpc -h " + str(PH) + " load radio_sender",                          # Sender aus Datei laden
-    "next"     : "mpc -h " + str(PH) + " next",                                       # Nächter Sender/Song
-    "prev"     : "mpc -h " + str(PH) + " prev",                                       # Vorheriger Sender/Song
-    "shuffle"  : "mpc -h " + str(PH) + " shuffle",                                    # Playlist zufällig zusammenstellen
-    "addmusic" : "cd " + parent_dir + "/music && mpc -h " + str(PH) + " add *.*",    # Alle MP3 Songs aus diesem Verzeichnis einlesen
-    "songinfo" : "mpc -h " + str(PH) + " current"                                     # Aktuelle Songinfo/Radioinfo
+    "clear"         : "mpc -h " + str(PH) + " clear",                                      # Playlist leeren
+    "update"        : "mpc -h " + str(PH) + " update",                                     # Playlist update
+    "play"          : "mpc -h " + str(PH) + " play ",                                      # Abspielen beginnen
+    "stop"          : "mpc -h " + str(PH) + " stop",                                       # Abspielen stoppen
+    "loadlist"      : "mpc -h " + str(PH) + " load radio_sender",                          # Sender aus Datei laden
+    "next"          : "mpc -h " + str(PH) + " next",                                       # Nächter Sender/Song
+    "prev"          : "mpc -h " + str(PH) + " prev",                                       # Vorheriger Sender/Song
+    "volumeup"      : "mpc -h " + str(PH) + " volume +5",
+    "volumedown"    : "mpc -h " + str(PH) + " volume -5",
+    "volumestartup" : "mpc -h " + str(PH) + " volume 20",
+    "shuffle"       : "mpc -h " + str(PH) + " shuffle",                                    # Playlist zufällig zusammenstellen
+    "addmusic"      : "cd " + parent_dir + "/music && mpc -h " + str(PH) + " add *.*",    # Alle MP3 Songs aus diesem Verzeichnis einlesen
+    "songinfo"      : "mpc -h " + str(PH) + " current"                                     # Aktuelle Songinfo/Radioinfo
 }
 
 
@@ -168,6 +171,7 @@ def RAModeOrMP3Mode( pin ):
 # RunUp Modus - einmalig beim Hochfahren
 def RUMode():
     logger.debug("RUMode")
+    os.system(mpc["volumestartup"])
     os.system(mpc["clear"])                                          # mpc clear
     os.system(mpc["update"])                                         # mpc update
     os.system('mpg321 ' + parent_dir + '/conf/StartUp.mp3')         # Start-Sound abspielen
@@ -528,6 +532,16 @@ def anzahl_sender():
     sn = get_stations()
     AnzSender = len(sn)                                                            # Umwandeln in int
 
+# ShutDown Modus
+def VolumeUp(pin):
+    logger.debug("VolumeUp")
+    os.system(mpc["volumeup"])
+
+# ShutDown Modus
+def VolumeDown(pin):
+    logger.debug("VolumeDown")
+    os.system(mpc["volumedown"])
+
 
 ####################
 # Beim Systemstart #
@@ -552,6 +566,10 @@ GPIO.add_event_detect(KeyRight, GPIO.FALLING, callback=SWH, bouncetime = 200)
 GPIO.add_event_detect(KeyLeft, GPIO.FALLING, callback=SWR, bouncetime = 200)
 # OK Key
 GPIO.add_event_detect(KeyOk, GPIO.FALLING, callback=SBMode, bouncetime = 200)
+# Volume Up Key
+GPIO.add_event_detect(KeyVolumeUp, GPIO.FALLING, callback=VolumeUp, bouncetime = 200)
+# Volume Down Key
+GPIO.add_event_detect(KeyVolumeDown, GPIO.FALLING, callback=VolumeDown, bouncetime = 200)
 
 
 #################
