@@ -208,6 +208,9 @@ def SBMode(pin):
         RBMode()
     elif (GPIO.input(KeyLeft) == GPIO.LOW) and (GPIO.input(KeyOk) == GPIO.LOW): # Wenn (B)Taste und (D)Taste zusammen gedrückt werden, dann RUNTERFAHREN
         SDMode()
+    elif modus == 32:
+        modus = 0
+        RAMode()
     else:                                                         # Standby einleiten
         modus = 31                                                # SBMode 3 1     In den Standby
         os.system(mpc["stop"])                                    # mpc Abspielen stoppen
