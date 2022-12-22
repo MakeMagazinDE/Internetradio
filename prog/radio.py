@@ -364,7 +364,7 @@ def ZeileA_RAMode_MP3Mode_SBMode():                                             
 def get_stations():
     logger.debug("get_stations")
     stations = ""
-    with open(str(radio_playlist), 'rb') as f:
+    with open(str(radio_playlist), 'r') as f:
         stations = f.readlines()[6:]
     return [station.split('#')[1].strip() for station in stations]
 
