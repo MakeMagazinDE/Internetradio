@@ -644,7 +644,7 @@ while True:
             time.sleep(3.0)
             os.system("sudo halt")                            # Raspi runterfahren
             sys.exit()
-        time.sleep(0.7)                                       # Display Aktualisierungszeit z.B. für Scrolltext, also nach welcher Zeit soll die Schleife wieder von oben anfangen.
+        time.sleep(0.2)                                       # Display Aktualisierungszeit z.B. für Scrolltext, also nach welcher Zeit soll die Schleife wieder von oben anfangen.
 
     except KeyboardInterrupt:                                 # Sonderbehandlung bei STRG+C
         GPIO.cleanup()                                        # Pinbelegung zurücksetzen
