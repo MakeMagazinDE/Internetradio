@@ -251,11 +251,11 @@ def ZeilenABCD_RUMode(v):
     if display_operating_instrcutions:
         za = "Bedienungsanleitung "
         zb = "anzeigen? Dann nun  "
-        zc = "    >>> (C)Taste--->"
-        zd = "gedrückt halten.   "
+        zc = "      OK-Taste      "
+        zd = "gedrückt halten.    "
         anzeige(za,zb,zc,zd)
         time.sleep(5)
-        if (GPIO.input(TasteModus) == GPIO.LOW):
+        if (GPIO.input(TasteOk) == GPIO.LOW):
             za = "--------------------"
             zb = "Bedienungsanleitung "
             zc = "  wird gestartet.   "
