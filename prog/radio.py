@@ -298,73 +298,38 @@ def ZeilenABCD_RUMode(v):
             anzeige(za,zb,zc,zd)                                       # Allgemeiner Aufruf der Anzeigefunktion mit Argumentübergabe
             time.sleep(4)
 
-            za = "    >>> (A)Taste--->"
+            za = ">>> >-Taste --->    "
             zb = "                    "
             zc = "Sender oder Song    "
             zd = "nach vorne springen "
             anzeige(za,zb,zc,zd)
             time.sleep(4)
 
-            za = "                    "
-            zb = "    >>> (B)Taste--->"
+            za = ">>> <-Taste --->    "
+            zb = "                    "
             zc = "Sender oder Song    "
             zd = "nach hinten springen"
             anzeige(za,zb,zc,zd)
             time.sleep(4)
 
-            za = "    >>> (A)Taste--->"
-            zb = "    >>> (B)Taste--->"
-            zc = "Springt mehrere     "
-            zd = "Sender weiter       "
-            anzeige(za,zb,zc,zd)
-            time.sleep(4)
-
-            za = "Wechselt zwischen   "
-            zb = "Radio und mp3-Mix   "
-            zc = "    >>> (C)Taste--->"
+            za = ">>> ^-Taste --->    "
+            zb = "                    "
+            zc = "Lautsärke erhöhen   "
             zd = "                    "
             anzeige(za,zb,zc,zd)
             time.sleep(4)
 
-            za = "Wechselt in den     "
-            zb = "Standby Betrieb     "
-            zc = "                    "
-            zd = "    >>> (D)Taste--->"
+            za = ">>> ˯-Taste --->    "
+            zb = "                    "
+            zc = "Lautstärke          "
+            zd = "verringern          "
             anzeige(za,zb,zc,zd)
             time.sleep(4)
 
-            za = "Radio               "
-            zb = "    >>> (B)Taste--->"
-            zc = "runterfahren        "
-            zd = "    >>> (D)Taste--->"
-            anzeige(za,zb,zc,zd)
-            time.sleep(4)
-
-            za = "    >>> (A)Taste--->"
-            zb = "Radio               "
-            zc = "neu starten         "
-            zd = "    >>> (D)Taste--->"
-            anzeige(za,zb,zc,zd)
-            time.sleep(4)
-
-            za = "   >>> (X)Taste---< "
-            zb = "Favoritsender 1     "
-            zc = "Langes halten       "
-            zd = "speichert!          "
-            anzeige(za,zb,zc,zd)
-            time.sleep(4)
-
-            za = "Favoritsender 2     "
-            zb = "   >>> (Y)Taste---< "
-            zc = "Langes halten       "
-            zd = "speichert!          "
-            anzeige(za,zb,zc,zd)
-            time.sleep(4)
-
-            za = "Schreibt akt. Radio-"
-            zb = "song in Merkliste.  "
-            zc = "   >>> (Z)Taste---< "
-            zd = "smb: conf/merk.txt  "
+            za = ">>> Ok-Taste --->   "
+            zb = "                    "
+            zc = "Wechselt in den     "
+            zd = "Standby-Modus       "
             anzeige(za,zb,zc,zd)
             time.sleep(4)
 
