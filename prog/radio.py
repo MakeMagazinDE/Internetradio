@@ -95,18 +95,18 @@ GPIO.setmode(GPIO.BOARD)
 #############
 # Pin Namen #
 #############
-TasteHoch=7
-TasteRunter=16
-TasteModus=13
+TasteRechts=7
+TasteLinks=16
+TasteOk=13
 TasteStandby=15
 
 
 ##################
 # Pins als Input #
 ##################
-GPIO.setup(TasteHoch, GPIO.IN)                                   # Taster Hoch
-GPIO.setup(TasteRunter, GPIO.IN)                                 # Taster Runter
-GPIO.setup(TasteModus, GPIO.IN)                                  # taster Online/Offline-MP3 Modus
+GPIO.setup(TasteRechts, GPIO.IN)                                   # Taster Hoch
+GPIO.setup(TasteLinks, GPIO.IN)                                 # Taster Runter
+GPIO.setup(TasteOk, GPIO.IN)                                  # taster Online/Offline-MP3 Modus
 GPIO.setup(TasteStandby, GPIO.IN)                                # Standby Button
 
 
@@ -545,13 +545,11 @@ RAMode()                   # Radio nach RunUp ohne Interrupt starten
 # TastenInerrupts mit Multithreading #
 ######################################
 # Next station
-GPIO.add_event_detect(TasteHoch, GPIO.FALLING, callback=SWH, bouncetime = 200)
+GPIO.add_event_detect(TasteRechts, GPIO.FALLING, callback=SWH, bouncetime = 200)
 # Previous station
-GPIO.add_event_detect(TasteRunter, GPIO.FALLING, callback=SWR, bouncetime = 200)
-# Taste C Event Eigene Musik Zufallswiedergabe
-GPIO.add_event_detect(TasteModus, GPIO.FALLING, callback=RAModeOrMP3Mode, bouncetime = 200)
-# Taste D Event Standby
-GPIO.add_event_detect(TasteStandby, GPIO.FALLING, callback=SBMode, bouncetime = 200)
+GPIO.add_event_detect(TasteLinks, GPIO.FALLING, callback=SWR, bouncetime = 200)
+# OK Key
+GPIO.add_event_detect(TasteOk, GPIO.FALLING, callback=SBMode, bouncetime = 200)
 
 
 #################
