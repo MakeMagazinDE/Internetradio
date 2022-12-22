@@ -624,27 +624,6 @@ while True:
             time.sleep(3.0)
             os.system("sudo halt")                            # Raspi runterfahren
             sys.exit()
-        elif modus == 6:
-            za = ZeileA_RAMode_MP3Mode_SBMode()
-            (zb,zc) = ZeilenBC_FAVMode()
-            zd = ZeileD_RAMode_MP3Mode_SBMode()
-            anzeige(za,zb,zc,zd)
-            time.sleep(3.0)
-            modus = 1
-        elif modus == 7:
-            za = ZeileA_RAMode_MP3Mode_SBMode()
-            (zb,zc) = ZeileBC_KeineFunktion()
-            zd = ZeileD_RAMode_MP3Mode_SBMode()
-            anzeige(za,zb,zc,zd)
-            time.sleep(3.0)
-            modus = 2
-        elif modus == 8:
-            za = ZeileA_RAMode_MP3Mode_SBMode()
-            (zb,zc)= ZeileBC_MERK()
-            zd = ZeileD_RAMode_MP3Mode_SBMode()
-            anzeige(za,zb,zc,zd)
-            time.sleep(3.0)
-            modus = 1
         time.sleep(0.7)                                       # Display Aktualisierungszeit z.B. für Scrolltext, also nach welcher Zeit soll die Schleife wieder von oben anfangen.
 
     except KeyboardInterrupt:                                 # Sonderbehandlung bei STRG+C
