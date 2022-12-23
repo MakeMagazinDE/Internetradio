@@ -114,6 +114,7 @@ GPIO.setup(KeyLeft, GPIO.IN)
 GPIO.setup(KeyOk, GPIO.IN)
 GPIO.setup(KeyVolumeUp, GPIO.IN)
 GPIO.setup(KeyVolumeDown, GPIO.IN)
+GPIO.setup(KeyStandby, GPIO.IN)
 
 
 ###################
@@ -205,9 +206,9 @@ def SBMode(pin):
     logger.debug("SBMode")
     global modus, bez
     time.sleep(0.5)                                               # Zeit für Doppeltastenbedienung geben
-    if (GPIO.input(KeyRight) == GPIO.LOW) and (GPIO.input(KeyOk) == GPIO.LOW):   # Wenn (A)Taste und (D)Taste zusammen gedrückt werden, dann NEUSTART
+    if (GPIO.input(KeyRight) == GPIO.LOW) and (GPIO.input(KeyStandby) == GPIO.LOW):   # Wenn (A)Taste und (D)Taste zusammen gedrückt werden, dann NEUSTART
         RBMode()
-    elif (GPIO.input(KeyLeft) == GPIO.LOW) and (GPIO.input(KeyOk) == GPIO.LOW): # Wenn (B)Taste und (D)Taste zusammen gedrückt werden, dann RUNTERFAHREN
+    elif (GPIO.input(KeyLeft) == GPIO.LOW) and (GPIO.input(KeyStandby) == GPIO.LOW): # Wenn (B)Taste und (D)Taste zusammen gedrückt werden, dann RUNTERFAHREN
         SDMode()
     elif modus == 32:
         modus = 0
@@ -577,7 +578,7 @@ GPIO.add_event_detect(KeyRight, GPIO.FALLING, callback=SWH, bouncetime = 200)
 # Previous station
 GPIO.add_event_detect(KeyLeft, GPIO.FALLING, callback=SWR, bouncetime = 200)
 # OK Key
-GPIO.add_event_detect(KeyOk, GPIO.FALLING, callback=SBMode, bouncetime = 200)
+GPIO.add_event_detect(KeyStandby, GPIO.FALLING, callback=SBMode, bouncetime = 200)
 # Volume Up Key
 GPIO.add_event_detect(KeyVolumeUp, GPIO.FALLING, callback=VolumeUp, bouncetime = 200)
 # Volume Down Key
