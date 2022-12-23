@@ -4,7 +4,14 @@ from time import *
 class i2c_device:
   def __init__(self, addr, port=0):
     self.addr = addr
-    self.bus = smbus2.SMBus(port)
+    tries = 0
+    while(tries < 10):
+      try:
+        self.bus = smbus2.SMBus(port)
+      except PermissionError:
+        tries = tries +1
+      else:
+        break
 
   # Write a single command
   def write_cmd(self, cmd):
