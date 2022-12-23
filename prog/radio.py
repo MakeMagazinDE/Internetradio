@@ -324,26 +324,26 @@ def ZeilenABCD_RUMode(v):
     time.sleep(3)
 
     # Speicherplatz
-    zb = "   Radiospeicher:   "
-    zc = "      " + str(frei_speicher) + "% frei      "
-    anzeige(za,zb,zc,zd)
-    time.sleep(3)
+    # zb = "   Radiospeicher:   "
+    # zc = "      " + str(frei_speicher) + "% frei      "
+    # anzeige(za,zb,zc,zd)
+    # time.sleep(3)
 
     # IP Anzeigen
-    za = "--------------------"
-    zb = "     IP Adresse:    "
-    zc = ZeileC_ip_anzeige()                                                         # Aufruf IP-Ermitteln
-    zd = "--------------------"
-    anzeige(za,zb,zc,zd)
-    time.sleep(3)
+    # za = "--------------------"
+    # zb = "     IP Adresse:    "
+    # zc = ZeileC_ip_anzeige()                                                         # Aufruf IP-Ermitteln
+    # zd = "--------------------"
+    # anzeige(za,zb,zc,zd)
+    # time.sleep(3)
 
     # Anzahl Sender
-    za = "--------------------"
-    zb = "    Starte Radio    "
-    zc = "  mit (" + str(AnzSender) + ") Sendern  "
-    zd = "--------------------"
-    anzeige(za,zb,zc,zd)
-    time.sleep(3)
+    # za = "--------------------"
+    # zb = "    Starte Radio    "
+    # zc = "  mit (" + str(AnzSender) + ") Sendern  "
+    # zd = "--------------------"
+    # anzeige(za,zb,zc,zd)
+    # time.sleep(3)
 
 # ZeileA_RAMode_MP3Mode_SBMode
 def ZeileA_RAMode_MP3Mode_SBMode():                                                  # Funktionsdefinition zum Ermitteln des Strings für Zeile A im Radio-, Offline- & Standby-Modus
