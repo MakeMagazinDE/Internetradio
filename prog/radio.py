@@ -35,7 +35,7 @@ parent_dir = os.path.realpath(current_dir + "/../..")
 #################
 # Konfiguration #
 #################
-version = "2022.1"
+version = "2022.1-xmas"
 
 display_operating_instrcutions = False       # display_operating_instrcutions True/False
 
