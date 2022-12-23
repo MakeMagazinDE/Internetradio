@@ -323,6 +323,14 @@ def ZeilenABCD_RUMode(v):
     anzeige(za,zb,zc,zd)
     time.sleep(3)
 
+    # Xmas greetings
+    za = "--------------------"
+    zb = " Frohe Weihnachten  "
+    zc = "    Schatz! :-*     "
+    zd = "--------------------"
+    anzeige(za,zb,zc,zd)
+    time.sleep(3)
+
     # Speicherplatz
     # zb = "   Radiospeicher:   "
     # zc = "      " + str(frei_speicher) + "% frei      "
