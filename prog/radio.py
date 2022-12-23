@@ -98,11 +98,12 @@ GPIO.setmode(GPIO.BOARD)
 #############
 # Pin Namen #
 #############
-KeyRight=7
-KeyLeft=16
-KeyOk=13
-KeyVolumeUp=15
-KeyVolumeDown=29
+KeyRight=7         # green
+KeyLeft=16         # yellow
+KeyOk=13           # blue
+KeyVolumeUp=15     # purple
+KeyVolumeDown=29   # grey
+KeyStandby=31      # white
 
 
 ##################
