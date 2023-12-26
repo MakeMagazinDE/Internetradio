@@ -322,7 +322,7 @@ def ZeilenABCD_RUMode(v):
     zc = str(v)
     zd = "--------------------"
     anzeige(za,zb,zc,zd)
-    time.sleep(3)
+    time.sleep(1)
 
     # Xmas greetings
     za = "--------------------"
@@ -330,7 +330,7 @@ def ZeilenABCD_RUMode(v):
     zc = "    Schatz! :-*     "
     zd = "--------------------"
     anzeige(za,zb,zc,zd)
-    time.sleep(3)
+    time.sleep(2)
 
     # Speicherplatz
     # zb = "   Radiospeicher:   "
