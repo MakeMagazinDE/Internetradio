@@ -66,8 +66,8 @@ mpc = {
     "volumedown"    : "mpc -h " + str(PH) + " volume -5",
     "volumestartup" : "mpc -h " + str(PH) + " volume 20",
     "shuffle"       : "mpc -h " + str(PH) + " shuffle",                                    # Playlist zufällig zusammenstellen
-    "addmusic"      : "cd " + parent_dir + "/music && mpc -h " + str(PH) + " add *.*",    # Alle MP3 Songs aus diesem Verzeichnis einlesen
-    "songinfo"      : "mpc -h " + str(PH) + " current"                                     # Aktuelle Songinfo/Radioinfo
+    "addmusic"      : "cd " + parent_dir + "/music && mpc -h " + str(PH) + " add *.*",     # Alle MP3 Songs aus diesem Verzeichnis einlesen
+    "songinfo"      : "mpc -h " + str(PH) + " current -f '%title%'"                        # Aktuelle Songinfo/Radioinfo
 }
 
 
@@ -429,10 +429,11 @@ def ZeileC_RAMode_MP3Mode():                                                    
     if not "#" in info_tmp:
         info_tmp = info_tmp.strip("\n")                                              # Umbruch raus
         info_tmp = info_tmp.strip()                                                  # Schmierzeichen entfernen
-        info_tmp = ":" + info_tmp
-        ldp = info_tmp.rfind(":")                                                    # Position des letzten Doppelpunktes im String suchen, gibt es sonst keinen, wird der angefügte : gefunden.
-        start = ldp + 1                                                              # Start-Index für String Splicing
-        zc_tmp = info_tmp[start:]                                                    # Von Start-Index String schreiben
+        # info_tmp = ":" + info_tmp
+        # ldp = info_tmp.rfind(":")                                                    # Position des letzten Doppelpunktes im String suchen, gibt es sonst keinen, wird der angefügte : gefunden.
+        # start = ldp + 1                                                              # Start-Index für String Splicing
+        # zc_tmp = info_tmp[start:]                                                    # Von Start-Index String schreiben
+        zc_tmp = info_tmp
         zc_tmp = zc_tmp.lstrip()                                                     # Leerzeichen am Anfang entfernen
         zc_tmp_laenge = len(zc_tmp)                                                  # Länge des übrigen Strings ermitteln
         return zc_tmp, zc_tmp_laenge                                                 # String und ANzahl Zeichen zurückgeben
