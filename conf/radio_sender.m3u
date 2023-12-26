@@ -4,8 +4,10 @@
 # Sendername max. 15 Zeichen                                             #
 ##########################################################################
 
+http://dispatcher.rndfnk.com/br/br1/obb/aac/low # Bayern 1
 http://dispatcher.rndfnk.com/br/br24live/live/aac/low # BR 24
 http://dispatcher.rndfnk.com/br/br3/live/aac/low # Bayern 3
 https://live.stream.charivari.de/955charivari-webradio # Charivari
 https://live.stream.charivari.de/955charivari-tomnovymix # CV Tom Novi Mix
 https://live.stream.charivari.de/955charivari-partyhitmix # CV Party Hitmix
+https://streaming.radiostreamlive.com/radiosantaclaus_devices # RadioSantaClaus
