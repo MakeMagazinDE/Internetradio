@@ -176,7 +176,7 @@ def RUMode():
     os.system(mpc["volumestartup"])
     os.system(mpc["clear"])                                          # mpc clear
     os.system(mpc["update"])                                         # mpc update
-    os.system('mpg321 ' + parent_dir + '/conf/StartUp.mp3')         # Start-Sound abspielen
+    os.system('mpg321 --gain 20 ' + parent_dir + '/conf/StartUp.mp3')         # Start-Sound abspielen
 
 # Radio-Modus
 def RAMode():
