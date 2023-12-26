@@ -373,10 +373,10 @@ def ZeileA_RAMode_MP3Mode_SBMode():                                             
             qual = "****"
         else:
             qual = "    "
-        za = "--<" + zeit + ">---<" + qual + ">--"                                   # Zeilen-String zusammenstellen
+        za = zeit + "           " + qual                                   # Zeilen-String zusammenstellen
         return za
     except ValueError:
-        za = "--<" + zeit + ">---<    >--"
+        za = zeit + "               "
         time.sleep(4.0)
         return za
 
