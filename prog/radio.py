@@ -450,7 +450,7 @@ def ZeileD_RAMode_MP3Mode_SBMode():                                             
     # Datum
     datum = time.strftime("%d.%m.%Y")                                                # Datum Format
     # Rückgabe für Zeile D
-    zd = "-<" + datum + ">-<" + wt + ">-"                                            # Zeilen-String zusammenstellen
+    zd = datum + "       " + wt                                            # Zeilen-String zusammenstellen
     return zd                                                                        # Rückgabe String für Zeile
 
 # ZeilenBC_MP3Mode
