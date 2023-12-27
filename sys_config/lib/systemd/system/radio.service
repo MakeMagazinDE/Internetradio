@@ -1,3 +1,4 @@
+# Unit file for kradio
 [Unit]
 Description=KRadio
 After=network.target
@@ -5,3 +6,6 @@ After=network.target
 [Service]
 Type=simple
 ExecStart=/usr/bin/python3 /home/pi/raspiradio/prog/radio.py
+
+[Install]
+WantedBy=multi-user.target
