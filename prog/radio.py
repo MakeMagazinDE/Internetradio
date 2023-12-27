@@ -661,7 +661,9 @@ while True:
         time.sleep(0.2)                                       # Display Aktualisierungszeit z.B. für Scrolltext, also nach welcher Zeit soll die Schleife wieder von oben anfangen.
 
     except KeyboardInterrupt:                                 # Sonderbehandlung bei STRG+C
-        GPIO.cleanup()                                        # Pinbelegung zurücksetzen
-        os.system(mpc["stop"])                                # Musik stoppen
-        anzaus()                                              # Anzeige aus
-        sys.exit()                                            # Aussteigen
+        break                                                 # Schleife verlassen
+
+GPIO.cleanup()                                        # Pinbelegung zurücksetzen
+os.system(mpc["stop"])                                # Musik stoppen
+anzaus()                                              # Anzeige aus
+sys.exit()                                            # Aussteigen
