@@ -26,12 +26,14 @@ then
 fi
 
 # copy init script
-if ! diff -w sys_config/etc/init.d/radio /etc/init.d/radio > /dev/null
+if ! diff -w sys_config/lib/systemd/system/radio.service /etc/systemd/system/kradio.service > /dev/null
 then
-    echo "Install updated init script"
-    sudo cp --backup=numbered sys_config/etc/init.d/radio /etc/init.d/radio
-    sudo chmod 755 /etc/init.d/radio
-    sudo update-rc.d radio defaults
+    echo "Install updated systemd service"
+    (sudo rm /etc/init.d/radio stop && sudo rm /etc/init.d/radio) || true
+    sudo cp --backup=numbered sys_config/lib/systemd/system/radio.service /etc/systemd/system/kradio.service
+    sudo systemctl daemon-reload
+    sudo systemctl enable kradio.service
+    sudo systemctl start kradio.service
 fi
 
 # Python dependencies
