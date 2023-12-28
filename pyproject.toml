@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "kradio"
+version = "1.0.0"
+description = "A simple kitchen webradio"
+authors = ["micxer <micxer@micxer.de>"]
+license = "MIT License"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "~3.9"
+smbus2 = "~0.4.3"
+"RPi.GPIO2" = { git = "https://github.com/underground-software/RPi.GPIO2.git", tag = "v0.4.0" }
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
