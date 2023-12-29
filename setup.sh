@@ -29,7 +29,6 @@ fi
 if ! diff -w sys_config/lib/systemd/system/radio.service /etc/systemd/system/kradio.service > /dev/null
 then
     echo "Install updated systemd service"
-    (sudo /etc/init.d/radio stop && sudo rm /etc/init.d/radio) || true
     sudo cp --backup=numbered sys_config/lib/systemd/system/radio.service /etc/systemd/system/kradio.service
     sudo systemctl daemon-reload
     sudo systemctl enable kradio.service
