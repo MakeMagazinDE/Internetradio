@@ -5,7 +5,7 @@ After=network.target
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/python3 /home/pi/raspiradio/prog/radio.py
+ExecStart=/usr/bin/python3 /home/kradio/raspiradio/prog/radio.py
 
 [Install]
 WantedBy=multi-user.target
