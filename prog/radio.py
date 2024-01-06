@@ -505,6 +505,14 @@ def ZeileBC_MERK():
     zc = "smb: conf/merk.txt  "
     return zb,zc
 
+def get_rolling_text(text, current_pos):
+    logger.debug("get_rolling_text")
+    if current_pos > len(text):
+        current_pos = 0
+    rolling_text = text[current_pos:current_pos+20]
+    current_pos += 1
+    return rolling_text, current_pos
+
 
 ############################
 # Senderwechsel und Merker #
@@ -597,17 +605,7 @@ while True:
             za = ZeileA_RAMode_MP3Mode_SBMode()
             zb = ZeileB_RAMode()
             zc_tmp, zc_tmp_len = ZeileC_RAMode_MP3Mode()      # Gibt die Sender-Song Info zurück n Zeichen
-            if zc_tmp_len > 20:                               # Wenn Songinfo 20 Zeichen (Displayzeile) überschreitet, dann Überhang ermitteln
-                ueberhang = zc_tmp_len -20                    # Ermittle Überhang von Zeichen also die Über die Displayreihe hinaus gehen
-                zc = zc_tmp[a:z]                          # Ausgeben und verschieben der Ausgabe des Strings immer um ein Zeichen nach rechts,
-                if a > ueberhang:                            # Solange machen bis alle Überhangzeichen abgearbeitet sind,
-                    a = 0                                     # Sobald alle Überhangzeichen durchgelaufen wieder a auf 0
-                    z = 20                                    # Sobald alle Überhangzeichen durchgelaufen wieder z auf 0
-                else:
-                    a = a+5                                   # Wenn a +1 den Überhang erreicht hat, ist der Text einmal komplett durchgelaufen.
-                    z = z+5                                   # Z also Ende der Ausgabe muss mit rücken
-            else:
-                zc = zc_tmp                                   # Wenn Text nicht laenger als Displayzeichen dann normal ausgeben
+            zc, a = get_rolling_text(zc_tmp, a)               # Gibt den Text zurück der angezeigt werden soll
             zd = ZeileD_RAMode_MP3Mode_SBMode()
             anzeige(za,zb,zc,zd)
         elif modus == 2:
