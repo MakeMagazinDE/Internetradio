@@ -13,4 +13,4 @@ Als Küchenradio geplant bringt dieses Radio auch andere Zimmer zum Klingen: Bed
 ![Picture](https://github.com/heise/Internetradio/blob/master/radio.png) 
 
 Den vollständigen Artikel mit der Bauanleitung gibt es in der **[Make-Ausgabe 1/19 ab Seite 38](https://www.heise.de/select/make/2019/1/1551100253897264)** zu lesen. 
-Hier gibt es die Materialliste, Konfigurationsdateien und Python-Skripte für das Internet-Radio zum Download.
+Hier gibt es die Firmware für das Wemos-D1-mini-Board.
